@@ -230,7 +230,7 @@ type Fetcher struct {
 	partMu    sync.Mutex
 	partTotal int64
 	partSize  int64
-	partDone  []int64
+	partBits  []uint64
 
 	// Slow start controller
 	slowStart *slowStartController
@@ -1745,6 +1745,11 @@ func (f *Fetcher) Meta() *fetcher.FetcherMeta {
 	return f.meta
 }
 
+// partBlockSize is the granularity of the covered byte tracking, it is small
+// enough that the progress bar looks smooth and cheap enough to keep a bitmap
+// for a very large file.
+const partBlockSize int64 = 64 * 1024
+
 // initPartitions splits the file into fixed slices, the ui draws one segment per
 // slice, which is what makes the bar look like IDM: every segment has a stable
 // position and its own progress.
@@ -1763,53 +1768,67 @@ func (f *Fetcher) initPartitions(total int64) {
 	if size <= 0 {
 		size = 1
 	}
-	done := make([]int64, n)
+	bits := make([]uint64, (total+partBlockSize-1)/partBlockSize)
 
 	f.partMu.Lock()
 	f.partTotal = total
 	f.partSize = size
-	f.partDone = done
+	f.partBits = bits
 	f.partMu.Unlock()
 }
 
-// addPartProgress counts bytes written to the file into the slices they belong
-// to. Re-downloaded bytes (work stealing rewrites a range) do not push a slice
-// past its own size.
+// addPartProgress marks the blocks of the file that are on disk. Marking is
+// idempotent, so re-downloading a range after work stealing does not skew the
+// result.
 func (f *Fetcher) addPartProgress(offset int64, n int64) {
 	if n <= 0 || offset < 0 {
 		return
 	}
 	f.partMu.Lock()
 	defer f.partMu.Unlock()
-	if len(f.partDone) == 0 || f.partSize <= 0 {
+	if len(f.partBits) == 0 || f.partTotal <= 0 {
 		return
 	}
 	end := offset + n
-	for offset < end {
-		idx := int(offset / f.partSize)
-		if idx >= len(f.partDone) {
-			break
-		}
-		sliceEnd := int64(idx+1) * f.partSize
-		chunk := end - offset
-		if chunk > sliceEnd-offset {
-			chunk = sliceEnd - offset
-		}
-		limit := f.partSize
-		if rest := f.partTotal - int64(idx)*f.partSize; rest < limit {
-			limit = rest
-		}
-		f.partDone[idx] += chunk
-		if f.partDone[idx] > limit {
-			f.partDone[idx] = limit
-		}
-		offset += chunk
+	if end > f.partTotal {
+		end = f.partTotal
+	}
+	if offset >= end {
+		return
+	}
+	first := offset / partBlockSize
+	last := (end - 1) / partBlockSize
+	for i := first; i <= last; i++ {
+		f.partBits[i/64] |= uint64(1) << uint(i%64)
 	}
 }
 
-// seedPartProgress marks an already downloaded range (resumed tasks) as done.
+// seedPartProgress marks an already downloaded range (prefetch or resume) as
+// done.
 func (f *Fetcher) seedPartProgress(offset int64, n int64) {
 	f.addPartProgress(offset, n)
+}
+
+// partitionDone returns the bytes of the partition [begin, end] that are on disk.
+func partitionDone(bits []uint64, begin, end int64) int64 {
+	if len(bits) == 0 || end < begin {
+		return 0
+	}
+	first := begin / partBlockSize
+	last := end / partBlockSize
+	var done int64
+	for i := first; i <= last; i++ {
+		blockStart := i * partBlockSize
+		if bits[i/64]&(uint64(1)<<uint(i%64)) == 0 {
+			continue
+		}
+		blockLen := partBlockSize
+		if rest := end - blockStart + 1; rest < blockLen {
+			blockLen = rest
+		}
+		done += blockLen
+	}
+	return done
 }
 
 func (f *Fetcher) Stats() any {
@@ -1819,24 +1838,24 @@ func (f *Fetcher) Stats() any {
 	}
 
 	f.partMu.Lock()
-	done := make([]int64, len(f.partDone))
-	copy(done, f.partDone)
+	bits := make([]uint64, len(f.partBits))
+	copy(bits, f.partBits)
 	sliceSize := f.partSize
 	f.partMu.Unlock()
 
-	statsConnections := make([]*fhttp.StatsConnection, 0, len(done))
-	if len(done) > 0 && sliceSize > 0 && total > 0 {
-		for i, bytes := range done {
-			begin := int64(i) * sliceSize
+	statsConnections := make([]*fhttp.StatsConnection, 0, len(bits))
+	if len(bits) > 0 && sliceSize > 0 && total > 0 {
+		for i := int64(0); ; i++ {
+			begin := i * sliceSize
+			if begin >= total {
+				break
+			}
 			end := begin + sliceSize - 1
 			if end >= total {
 				end = total - 1
 			}
-			if begin > end {
-				continue
-			}
-			size := end - begin + 1
-			completed := bytes >= size
+			bytes := partitionDone(bits, begin, end)
+			completed := bytes >= end-begin+1
 			state := "downloading"
 			if completed {
 				state = "completed"
@@ -1844,7 +1863,7 @@ func (f *Fetcher) Stats() any {
 				state = "notStarted"
 			}
 			statsConnections = append(statsConnections, &fhttp.StatsConnection{
-				ID:         i,
+				ID:         int(i),
 				Role:       "partition",
 				State:      state,
 				Begin:      begin,
