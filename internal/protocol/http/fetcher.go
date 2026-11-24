@@ -827,6 +827,11 @@ func (f *Fetcher) expandConnections() {
 		// Mark prefetched bytes as already downloaded
 		conn.Chunk.Downloaded = 0    // Start fresh from prefetched position
 		conn.Downloaded = prefetched // Track total downloaded including prefetch
+		if prefetched > 0 {
+			// The prefetched bytes are already in the file, count them into the
+			// first slices so the progress bar does not stop short.
+			f.seedPartProgress(0, prefetched)
+		}
 
 		conn.ctx, conn.cancel = context.WithCancel(f.ctx)
 		f.connections = append(f.connections, conn)
