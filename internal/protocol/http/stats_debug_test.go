@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -51,5 +52,13 @@ func TestStatsDebug(t *testing.T) {
 		t.Fatal(err)
 	}
 	summary("STATS_FINAL")
+	st := f.Stats().(*ph.Stats)
+	for _, c := range st.Connections {
+		fmt.Printf("SEG id=%d begin=%d end=%d size=%d downloaded=%d completed=%v\n",
+			c.ID, c.Begin, c.End, c.End-c.Begin+1, c.Downloaded, c.Completed)
+	}
+	if fi, err := os.Stat(test.DownloadFile); err == nil {
+		fmt.Println("FILE_SIZE", fi.Size())
+	}
 	fmt.Println("PROGRESS", f.Progress())
 }
