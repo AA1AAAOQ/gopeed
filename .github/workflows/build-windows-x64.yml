@@ -105,7 +105,7 @@ jobs:
         env:
           VERSION: ${{ env.APP_VERSION }}
         run: |
-          cd build/windows
+          cd ui/flutter/build/windows
           $TAG = "v$env:VERSION"
           $iss = @"
           #define MyAppName "Gopeed"
