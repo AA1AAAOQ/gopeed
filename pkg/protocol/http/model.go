@@ -1,5 +1,11 @@
 package http
 
+// DefaultUserAgent is used when the configured user agent is empty.
+const DefaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+
+// DefaultConnections is used when the configured connection count is invalid.
+const DefaultConnections = 16
+
 type ReqExtra struct {
 	Method string            `json:"method"`
 	Header map[string]string `json:"header"`
