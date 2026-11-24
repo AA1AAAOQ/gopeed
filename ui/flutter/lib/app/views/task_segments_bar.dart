@@ -52,12 +52,12 @@ class TaskSegmentsBar extends StatelessWidget {
             painter: _SegmentsPainter(
               connections: connections,
               total: total,
-              track: colorScheme.surfaceContainerHighest,
+              track: colorScheme.onSurface.withValues(alpha: 0.10),
               primary: colorScheme.primary,
               completedColor: Colors.green,
               failedColor: colorScheme.error,
               connectingColor: Colors.amber,
-              idleColor: colorScheme.outline,
+              idleColor: colorScheme.onSurface.withValues(alpha: 0.45),
             ),
           ),
         ),
@@ -125,16 +125,20 @@ class _SegmentsPainter extends CustomPainter {
       // The slice background shows the whole range the connection owns, the
       // solid part is what it already downloaded.
       canvas.drawRect(Rect.fromLTWH(x0, 0, w, size.height),
-          Paint()..color = color.withValues(alpha: 0.22));
-      final filled = w * c.ratio;
+          Paint()..color = color.withValues(alpha: 0.35));
+      // A finished connection owns its whole slice, no matter what the byte
+      // counters of the last read say.
+      final done = c.completed || c.state == 'completed';
+      final filled = done ? w : w * c.ratio;
       if (filled > 0) {
         canvas.drawRect(Rect.fromLTWH(x0, 0, filled, size.height),
             Paint()..color = color);
       }
-      // 1px separator so neighbouring slices stay readable
-      if (w > 2.5) {
-        canvas.drawRect(Rect.fromLTWH(x1 - 0.7, 0, 0.7, size.height),
-            Paint()..color = track);
+      // thin separator so neighbouring slices stay readable
+      if (w > 4) {
+        canvas.drawRect(Rect.fromLTWH(x1 - 1, 0, 1, size.height),
+            Paint()
+              ..color = track.withValues(alpha: 0.35));
       }
     }
     canvas.restore();
@@ -151,6 +155,7 @@ class _SegmentsPainter extends CustomPainter {
       if (a.begin != b.begin ||
           a.end != b.end ||
           a.downloaded != b.downloaded ||
+          a.completed != b.completed ||
           a.state != b.state ||
           a.failed != b.failed) {
         return true;
