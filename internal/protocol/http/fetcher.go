@@ -662,6 +662,12 @@ func (f *Fetcher) doStart() error {
 	f.file = file
 	f.fileMu.Unlock()
 
+	// The progress bar shows one segment per slice of the file, create them
+	// before any byte is copied so nothing is missed.
+	if f.meta.Res != nil {
+		f.initPartitions(f.meta.Res.Size)
+	}
+
 	// For range-supported resources, stop prefetch and copy data
 	// For non-range resources, the response will be used directly
 	var prefetchedBytes int64
@@ -791,7 +797,6 @@ func (f *Fetcher) expandConnections() {
 	}
 
 	totalSize := f.meta.Res.Size
-	f.initPartitions(totalSize)
 
 	f.connMu.Lock()
 
@@ -1771,6 +1776,10 @@ func (f *Fetcher) initPartitions(total int64) {
 	bits := make([]uint64, (total+partBlockSize-1)/partBlockSize)
 
 	f.partMu.Lock()
+	if len(f.partBits) > 0 && f.partTotal == total {
+		f.partMu.Unlock()
+		return
+	}
 	f.partTotal = total
 	f.partSize = size
 	f.partBits = bits
