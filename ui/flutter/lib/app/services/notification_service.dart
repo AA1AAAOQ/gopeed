@@ -98,12 +98,14 @@ class NotificationService extends GetxService {
         final notifyEnabled =
             appController.downloaderConfig.value.extra.desktopNotification;
 
+        final finishedNames = <String>[];
         for (var task in tasks) {
           final prevStatus = _previousStatus[task.id];
           final currentStatus = task.status;
 
           if (prevStatus != null && prevStatus != currentStatus) {
             if (currentStatus == Status.done) {
+              finishedNames.add(task.name);
               if (notifyEnabled) {
                 _showNotification(
                   title: 'notificationTaskDone'.tr,
@@ -111,6 +113,7 @@ class NotificationService extends GetxService {
                 );
               }
             } else if (currentStatus == Status.error) {
+              finishedNames.add(task.name);
               if (notifyEnabled) {
                 _showNotification(
                   title: 'notificationTaskError'.tr,
@@ -120,6 +123,10 @@ class NotificationService extends GetxService {
             }
           }
           _previousStatus[task.id] = currentStatus;
+        }
+
+        if (finishedNames.isNotEmpty) {
+          appController.onTaskFinished(taskName: finishedNames.join(', '));
         }
 
         // Clean up deleted tasks from map

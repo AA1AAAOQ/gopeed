@@ -11,7 +11,7 @@ const String _bookmark = 'bookmark';
 const String _createHistory = 'createHistory';
 const String _webToken = 'webToken';
 const String _runAsMenubarApp = 'runAsMenubarApp';
-const String _popupOnTaskStart = 'popupOnTaskStart';
+const String _popupOnTaskTiming = 'popupOnTaskTiming';
 const String _analyticsEnabled = 'analyticsEnabled';
 const String _analyticsClientId = 'analyticsClientId';
 
@@ -122,13 +122,13 @@ class Database {
     return box.get(_runAsMenubarApp, defaultValue: false) as bool;
   }
 
-  /// Whether the main window should be popped up when a new task starts.
-  void savePopupOnTaskStart(bool value) {
-    box.put(_popupOnTaskStart, value);
+  /// When the main window should be popped up: off / start / done / both.
+  void savePopupOnTaskTiming(String value) {
+    box.put(_popupOnTaskTiming, value);
   }
 
-  bool getPopupOnTaskStart() {
-    return box.get(_popupOnTaskStart, defaultValue: true) as bool;
+  String getPopupOnTaskTiming() {
+    return box.get(_popupOnTaskTiming, defaultValue: 'start') as String;
   }
 
   void saveAnalyticsEnabled(bool value) {

@@ -39,6 +39,7 @@ import '../../../../util/util.dart';
 import '../../../routes/app_pages.dart';
 import '../../../rpc/rpc.dart';
 import '../../redirect/views/redirect_view.dart';
+import '../../task/controllers/task_controller.dart';
 import '../../../services/notification_service.dart';
 
 const unixSocketPath = 'gopeed.sock';
@@ -67,6 +68,23 @@ class PendingUpdateTask {
   final String name;
 
   PendingUpdateTask({required this.id, required this.name});
+}
+
+/// When the main window should be popped up for a download task.
+class TaskPopupTiming {
+  static const off = 'off';
+  static const start = 'start';
+  static const done = 'done';
+  static const both = 'both';
+
+  static const values = [off, start, done, both];
+
+  /// Task page tabs: 0 = downloading, 1 = downloaded.
+  static const tabOfStart = 0;
+  static const tabOfDone = 1;
+
+  static String labelKey(String timing) =>
+      'popupTiming${timing[0].toUpperCase()}${timing.substring(1)}';
 }
 
 class AppController extends GetxController with WindowListener, TrayListener {
@@ -179,10 +197,10 @@ class AppController extends GetxController with WindowListener, TrayListener {
 
   DateTime? _lastRevealTime;
 
-  /// Restore the main window from tray/minimized state, then bring it to the
-  /// front and grab the focus. This is what "popup the main window when a
-  /// download starts" ends up calling.
-  Future<void> revealMainWindow({String reason = ''}) async {
+  /// Restore the main window from tray/minimized state, bring it to the front
+  /// and grab the focus. [tabIndex] switches the task page to the "downloading"
+  /// (0) or "downloaded" (1) tab after the navigation.
+  Future<void> revealMainWindow({String reason = '', int? tabIndex}) async {
     if (!Util.isDesktop()) {
       return;
     }
@@ -196,6 +214,9 @@ class AppController extends GetxController with WindowListener, TrayListener {
         await windowManager.restore();
       }
       await windowManager.show();
+      // Put the window in the middle of the screen, it may be dragged off
+      // screen before being hidden to the tray.
+      await windowManager.center();
       await windowManager.focus();
       // Windows foreground lock may keep the window behind the current one.
       // Toggling always-on-top is the most reliable way to force it up.
@@ -207,30 +228,84 @@ class AppController extends GetxController with WindowListener, TrayListener {
         await windowManager.focus();
         await windowManager.setAlwaysOnTop(false);
       }
+      await _focusTaskPage(tabIndex);
     } catch (e) {
       logger.w("reveal main window fail, reason: $reason", e, StackTrace.current);
+    }
+  }
+
+  bool _isTaskPageVisible() {
+    try {
+      final conf = Get.rootDelegate.currentConfiguration;
+      if (conf == null) {
+        return false;
+      }
+      final path = conf.uri.path;
+      return path == Routes.TASK || path.startsWith('${Routes.TASK}/');
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Make sure the task page is the current page, and switch its tab.
+  Future<void> _focusTaskPage(int? tabIndex) async {
+    try {
+      if (!_isTaskPageVisible()) {
+        Get.rootDelegate.offAndToNamed(Routes.TASK);
+      }
+      if (tabIndex == null) {
+        return;
+      }
+      // The task binding runs with the navigation, give the page a moment to
+      // register its controller before switching the tab.
+      for (var i = 0; i < 10; i++) {
+        if (Get.isRegistered<TaskController>()) {
+          Get.find<TaskController>().switchTab(tabIndex);
+          return;
+        }
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+    } catch (e) {
+      logger.w("switch to task page fail", e, StackTrace.current);
     }
   }
 
   /// Called when a new download task shows up (created by the create page,
   /// the browser extension, the REST API, a magnet link, the CLI, ...).
   void onTaskStarted({String? taskName}) {
-    if (!Util.isDesktop()) {
+    if (!Util.isDesktop() || !_popupOnStart) {
       return;
     }
-    if (!Database.instance.getPopupOnTaskStart()) {
+    _revealForTask(taskName, tabIndex: TaskPopupTiming.tabOfStart);
+  }
+
+  /// Called when a task is done or failed.
+  void onTaskFinished({String? taskName}) {
+    if (!Util.isDesktop() || !_popupOnDone) {
       return;
     }
+    _revealForTask(taskName, tabIndex: TaskPopupTiming.tabOfDone);
+  }
+
+  String get _popupTiming => Database.instance.getPopupOnTaskTiming();
+
+  bool get _popupOnStart =>
+      _popupTiming == TaskPopupTiming.start || _popupTiming == TaskPopupTiming.both;
+
+  bool get _popupOnDone =>
+      _popupTiming == TaskPopupTiming.done || _popupTiming == TaskPopupTiming.both;
+
+  void _revealForTask(String? taskName, {int? tabIndex}) {
     final now = DateTime.now();
-    // Debounce: batch creating (e.g. a torrent with many files, or dropping a
-    // bunch of links) must not fight over the window for every single task.
+    // Debounce: a batch of tasks (torrent files, a bunch of links) must not
+    // fight over the window for every single task.
     if (_lastRevealTime != null &&
-        now.difference(_lastRevealTime!).inMilliseconds < 1500) {
+        now.difference(_lastRevealTime!).inMilliseconds < 800) {
       return;
     }
     _lastRevealTime = now;
-    logger.i("task started, reveal main window: ${taskName ?? ''}");
-    revealMainWindow(reason: taskName ?? 'task started');
+    logger.i("popup main window, task: ${taskName ?? ''}");
+    revealMainWindow(reason: taskName ?? 'task event', tabIndex: tabIndex);
   }
 
   Future<void> _initDeepLinks() async {

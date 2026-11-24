@@ -521,26 +521,37 @@ class SettingView extends GetView<SettingController> {
             );
           });
 
-    final popupOnTaskStartEnabled = Database.instance.getPopupOnTaskStart().obs;
-    final buildPopupOnTaskStart = !Util.isDesktop()
+    final popupTimingValue = Database.instance.getPopupOnTaskTiming().obs;
+    final buildPopupOnTaskTiming = !Util.isDesktop()
         ? () => null
-        : _buildConfigItem('popupOnTaskStart', () {
-            return popupOnTaskStartEnabled.value ? 'on'.tr : 'off'.tr;
+        : _buildConfigItem('popupTiming', () {
+            return TaskPopupTiming.labelKey(popupTimingValue.value).tr;
           }, (Key key) {
             return Container(
               alignment: Alignment.centerLeft,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(() => Switch(
-                        value: popupOnTaskStartEnabled.value,
-                        onChanged: (bool value) {
-                          popupOnTaskStartEnabled.value = value;
-                          Database.instance.savePopupOnTaskStart(value);
-                        },
-                      )),
+                  DropdownButtonFormField<String>(
+                    value: popupTimingValue.value,
+                    items: TaskPopupTiming.values
+                        .map((timing) => DropdownMenuItem(
+                              value: timing,
+                              child:
+                                  Text(TaskPopupTiming.labelKey(timing).tr),
+                            ))
+                        .toList(),
+                    onChanged: (String? value) async {
+                      if (value == null || value == popupTimingValue.value) {
+                        return;
+                      }
+                      popupTimingValue.value = value;
+                      Database.instance.savePopupOnTaskTiming(value);
+                      controller.clearTap();
+                    },
+                  ),
                   Text(
-                    'popupOnTaskStartDesc'.tr,
+                    'popupTimingDesc'.tr,
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).hintColor,
@@ -1777,7 +1788,7 @@ class SettingView extends GetView<SettingController> {
                             buildBrowserExtension(),
                             buildAutoStartup(),
                             buildMenubarMode(),
-                            buildPopupOnTaskStart(),
+                            buildPopupOnTaskTiming(),
                             buildDesktopNotification(),
                           ]),
                         )),
