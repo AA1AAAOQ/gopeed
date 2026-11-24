@@ -524,17 +524,32 @@ class SettingView extends GetView<SettingController> {
     final popupOnTaskStartEnabled = Database.instance.getPopupOnTaskStart().obs;
     final buildPopupOnTaskStart = !Util.isDesktop()
         ? () => null
-        : ListTile(
-            title: Text('popupOnTaskStart'.tr),
-            subtitle: Text('popupOnTaskStartDesc'.tr),
-            trailing: Obx(() => Switch(
-                  value: popupOnTaskStartEnabled.value,
-                  onChanged: (bool value) {
-                    popupOnTaskStartEnabled.value = value;
-                    Database.instance.savePopupOnTaskStart(value);
-                  },
-                )),
-          );
+        : _buildConfigItem('popupOnTaskStart', () {
+            return popupOnTaskStartEnabled.value ? 'on'.tr : 'off'.tr;
+          }, (Key key) {
+            return Container(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(() => Switch(
+                        value: popupOnTaskStartEnabled.value,
+                        onChanged: (bool value) {
+                          popupOnTaskStartEnabled.value = value;
+                          Database.instance.savePopupOnTaskStart(value);
+                        },
+                      )),
+                  Text(
+                    'popupOnTaskStartDesc'.tr,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).hintColor,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          });
 
     // http config items start
     final httpConfig = downloaderCfg.value.protocolConfig.http;
