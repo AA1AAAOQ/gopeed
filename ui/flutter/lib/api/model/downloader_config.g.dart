@@ -39,20 +39,6 @@ Map<String, dynamic> _$DownloaderConfigToJson(DownloaderConfig instance) =>
       'autoDeleteMissingFileTasks': instance.autoDeleteMissingFileTasks,
     };
 
-ProtocolConfig _$ProtocolConfigFromJson(Map<String, dynamic> json) =>
-    ProtocolConfig()
-      ..http = HttpConfig.fromJson(json['http'] as Map<String, dynamic>)
-      ..bt = BtConfig.fromJson(json['bt'] as Map<String, dynamic>)
-      ..ed2k = Ed2kConfig.fromJson(
-          json['ed2k'] as Map<String, dynamic>? ?? <String, dynamic>{});
-
-Map<String, dynamic> _$ProtocolConfigToJson(ProtocolConfig instance) =>
-    <String, dynamic>{
-      'http': instance.http.toJson(),
-      'bt': instance.bt.toJson(),
-      'ed2k': instance.ed2k.toJson(),
-    };
-
 HttpConfig _$HttpConfigFromJson(Map<String, dynamic> json) => HttpConfig(
       userAgent: json['userAgent'] as String? ?? '',
       connections: (json['connections'] as num?)?.toInt() ?? 0,
@@ -66,48 +52,11 @@ Map<String, dynamic> _$HttpConfigToJson(HttpConfig instance) =>
       'useServerCtime': instance.useServerCtime,
     };
 
-BtConfig _$BtConfigFromJson(Map<String, dynamic> json) => BtConfig(
-      listenPort: (json['listenPort'] as num?)?.toInt() ?? 0,
-      trackers: (json['trackers'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      seedKeep: json['seedKeep'] as bool? ?? false,
-      seedRatio: (json['seedRatio'] as num?)?.toDouble() ?? 0,
-      seedTime: (json['seedTime'] as num?)?.toInt() ?? 0,
-    );
-
-Map<String, dynamic> _$BtConfigToJson(BtConfig instance) => <String, dynamic>{
-      'listenPort': instance.listenPort,
-      'trackers': instance.trackers,
-      'seedKeep': instance.seedKeep,
-      'seedRatio': instance.seedRatio,
-      'seedTime': instance.seedTime,
-    };
-
-Ed2kConfig _$Ed2kConfigFromJson(Map<String, dynamic> json) => Ed2kConfig(
-      listenPort: (json['listenPort'] as num?)?.toInt() ?? 0,
-      udpPort: (json['udpPort'] as num?)?.toInt() ?? 0,
-      serverAddr: json['serverAddr'] as String? ?? '',
-      serverMet: json['serverMet'] as String? ?? '',
-      nodesDat: json['nodesDat'] as String? ?? '',
-    );
-
-Map<String, dynamic> _$Ed2kConfigToJson(Ed2kConfig instance) =>
-    <String, dynamic>{
-      'listenPort': instance.listenPort,
-      'udpPort': instance.udpPort,
-      'serverAddr': instance.serverAddr,
-      'serverMet': instance.serverMet,
-      'nodesDat': instance.nodesDat,
-    };
-
 ExtraConfig _$ExtraConfigFromJson(Map<String, dynamic> json) => ExtraConfig(
       themeMode: json['themeMode'] as String? ?? '',
       locale: json['locale'] as String? ?? '',
       lastDeleteTaskKeep: json['lastDeleteTaskKeep'] as bool? ?? false,
       defaultDirectDownload: json['defaultDirectDownload'] as bool? ?? false,
-      defaultBtClient: json['defaultBtClient'] as bool? ?? true,
       notifyWhenNewVersion: json['notifyWhenNewVersion'] as bool? ?? true,
       autoStartTasks: json['autoStartTasks'] as bool? ?? false,
       desktopNotification: json['desktopNotification'] as bool? ?? true,
@@ -116,7 +65,6 @@ ExtraConfig _$ExtraConfigFromJson(Map<String, dynamic> json) => ExtraConfig(
               .toList() ??
           const [],
     )
-      ..bt = ExtraConfigBt.fromJson(json['bt'] as Map<String, dynamic>)
       ..githubMirror = ExtraConfigGithubMirror.fromJson(
           json['githubMirror'] as Map<String, dynamic>?);
 
@@ -126,13 +74,11 @@ Map<String, dynamic> _$ExtraConfigToJson(ExtraConfig instance) =>
       'locale': instance.locale,
       'lastDeleteTaskKeep': instance.lastDeleteTaskKeep,
       'defaultDirectDownload': instance.defaultDirectDownload,
-      'defaultBtClient': instance.defaultBtClient,
       'notifyWhenNewVersion': instance.notifyWhenNewVersion,
       'autoStartTasks': instance.autoStartTasks,
       'desktopNotification': instance.desktopNotification,
       'downloadCategories':
           instance.downloadCategories.map((e) => e.toJson()).toList(),
-      'bt': instance.bt.toJson(),
       'githubMirror': instance.githubMirror.toJson(),
     };
 
@@ -208,41 +154,6 @@ Map<String, dynamic> _$ProxyConfigToJson(ProxyConfig instance) =>
       'usr': instance.usr,
       'pwd': instance.pwd,
     };
-
-ExtraConfigBt _$ExtraConfigBtFromJson(Map<String, dynamic> json) =>
-    ExtraConfigBt()
-      ..trackerSubscribeUrls = (json['trackerSubscribeUrls'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList()
-      ..subscribeTrackers = (json['subscribeTrackers'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList()
-      ..autoUpdateTrackers = json['autoUpdateTrackers'] as bool
-      ..lastTrackerUpdateTime = json['lastTrackerUpdateTime'] == null
-          ? null
-          : DateTime.parse(json['lastTrackerUpdateTime'] as String)
-      ..customTrackers = (json['customTrackers'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList();
-
-Map<String, dynamic> _$ExtraConfigBtToJson(ExtraConfigBt instance) {
-  final val = <String, dynamic>{
-    'trackerSubscribeUrls': instance.trackerSubscribeUrls,
-    'subscribeTrackers': instance.subscribeTrackers,
-    'autoUpdateTrackers': instance.autoUpdateTrackers,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('lastTrackerUpdateTime',
-      instance.lastTrackerUpdateTime?.toIso8601String());
-  val['customTrackers'] = instance.customTrackers;
-  return val;
-}
 
 GithubMirror _$GithubMirrorFromJson(Map<String, dynamic> json) => GithubMirror(
       type: $enumDecode(_$GithubMirrorTypeEnumMap, json['type']),

@@ -30,15 +30,19 @@ class DownloaderConfig {
 @JsonSerializable(explicitToJson: true)
 class ProtocolConfig {
   HttpConfig http = HttpConfig();
-  BtConfig bt = BtConfig();
-  Ed2kConfig ed2k = Ed2kConfig();
 
   ProtocolConfig();
 
-  factory ProtocolConfig.fromJson(Map<String, dynamic>? json) =>
-      json == null ? ProtocolConfig() : _$ProtocolConfigFromJson(json);
+  factory ProtocolConfig.fromJson(Map<String, dynamic>? json) {
+    final config = ProtocolConfig();
+    final httpJson = json?['http'];
+    if (httpJson is Map<String, dynamic>) {
+      config.http = HttpConfig.fromJson(httpJson);
+    }
+    return config;
+  }
 
-  Map<String, dynamic> toJson() => _$ProtocolConfigToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{'http': http.toJson()};
 }
 
 @JsonSerializable()
@@ -59,63 +63,17 @@ class HttpConfig {
   Map<String, dynamic> toJson() => _$HttpConfigToJson(this);
 }
 
-@JsonSerializable()
-class BtConfig {
-  int listenPort;
-  List<String> trackers;
-  bool seedKeep;
-  double seedRatio;
-  int seedTime;
-
-  BtConfig({
-    this.listenPort = 0,
-    this.trackers = const [],
-    this.seedKeep = false,
-    this.seedRatio = 0,
-    this.seedTime = 0,
-  });
-
-  factory BtConfig.fromJson(Map<String, dynamic> json) =>
-      _$BtConfigFromJson(json);
-
-  Map<String, dynamic> toJson() => _$BtConfigToJson(this);
-}
-
-@JsonSerializable()
-class Ed2kConfig {
-  int listenPort;
-  int udpPort;
-  String serverAddr;
-  String serverMet;
-  String nodesDat;
-
-  Ed2kConfig({
-    this.listenPort = 0,
-    this.udpPort = 0,
-    this.serverAddr = '',
-    this.serverMet = '',
-    this.nodesDat = '',
-  });
-
-  factory Ed2kConfig.fromJson(Map<String, dynamic> json) =>
-      _$Ed2kConfigFromJson(json);
-
-  Map<String, dynamic> toJson() => _$Ed2kConfigToJson(this);
-}
-
 @JsonSerializable(explicitToJson: true)
 class ExtraConfig {
   String themeMode;
   String locale;
   bool lastDeleteTaskKeep;
   bool defaultDirectDownload;
-  bool defaultBtClient;
   bool notifyWhenNewVersion;
   bool autoStartTasks;
   bool desktopNotification;
   List<DownloadCategory> downloadCategories;
 
-  ExtraConfigBt bt = ExtraConfigBt();
   ExtraConfigGithubMirror githubMirror = ExtraConfigGithubMirror();
 
   ExtraConfig({
@@ -123,7 +81,6 @@ class ExtraConfig {
     this.locale = '',
     this.lastDeleteTaskKeep = false,
     this.defaultDirectDownload = false,
-    this.defaultBtClient = true,
     this.notifyWhenNewVersion = true,
     this.autoStartTasks = false,
     this.desktopNotification = true,
@@ -213,23 +170,6 @@ class ProxyConfig {
       _$ProxyConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProxyConfigToJson(this);
-}
-
-@JsonSerializable()
-class ExtraConfigBt {
-  List<String> trackerSubscribeUrls = [];
-  List<String> subscribeTrackers = [];
-  bool autoUpdateTrackers = true;
-  DateTime? lastTrackerUpdateTime;
-
-  List<String> customTrackers = [];
-
-  ExtraConfigBt();
-
-  factory ExtraConfigBt.fromJson(Map<String, dynamic> json) =>
-      _$ExtraConfigBtFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ExtraConfigBtToJson(this);
 }
 
 enum GithubMirrorType {

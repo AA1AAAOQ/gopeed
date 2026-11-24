@@ -19,6 +19,7 @@ import 'model/resolve_task.dart';
 import 'model/result.dart';
 import 'model/switch_extension.dart';
 import 'model/task.dart';
+import 'model/task_stats.dart';
 import 'model/update_check_extension_resp.dart';
 import 'model/update_extension_settings.dart';
 
@@ -151,6 +152,24 @@ Future<List<Task>> getTasks(List<Status> statuses) async {
       () => _client.dio.get(
           "/api/v1/tasks?${statuses.map((e) => "status=${e.name}").join("&")}"),
       (data) => (data as List).map((e) => Task.fromJson(e)).toList());
+}
+
+Future<TaskStats> getTaskStats(String id) async {
+  return _parse(() => _client.dio.get("api/v1/tasks/$id/stats"),
+      (data) => TaskStats.fromJson(data as Map<String, dynamic>));
+}
+
+/// Open the server sent events stream that pushes the task list and the per
+/// connection stats, used for the near real time progress bars.
+Future<Response<ResponseBody>> openTaskStream() {
+  return _client.dio.get<ResponseBody>(
+    "api/v1/tasks/stream",
+    options: Options(
+      responseType: ResponseType.stream,
+      receiveTimeout: Duration.zero,
+      headers: {"Accept": "text/event-stream"},
+    ),
+  );
 }
 
 Future<void> pauseTask(String id) async {

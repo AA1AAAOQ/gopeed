@@ -16,6 +16,7 @@ import '../modules/task/controllers/task_downloading_controller.dart';
 import '../modules/task/views/task_view.dart';
 import '../routes/app_pages.dart';
 import 'file_icon.dart';
+import 'task_segments_bar.dart';
 
 class BuildTaskListView extends GetView {
   final List<Task> tasks;
@@ -614,8 +615,10 @@ class BuildTaskListView extends GetView {
                   ),
                   isDone()
                       ? Container()
-                      : LinearProgressIndicator(
-                          value: getProgress(),
+                      : TaskSegmentsBar(
+                          task: task,
+                          progress: getProgress(),
+                          height: 6,
                         ),
                   // Extraction status row
                   if (task.progress.extractStatus != ExtractStatus.none)

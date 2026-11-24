@@ -41,26 +41,9 @@ import '../../../rpc/rpc.dart';
 import '../../redirect/views/redirect_view.dart';
 import '../../task/controllers/task_controller.dart';
 import '../../../services/notification_service.dart';
+import '../../../services/task_stream_service.dart';
 
 const unixSocketPath = 'gopeed.sock';
-
-const allTrackerSubscribeUrls = [
-  'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt',
-  'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_http.txt',
-  'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_https.txt',
-  'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_ip.txt',
-  'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_udp.txt',
-  'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_ws.txt',
-  'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt',
-  'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best_ip.txt',
-  'https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt',
-  'https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best.txt',
-  'https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/http.txt',
-];
-final allTrackerSubscribeUrlCdns = {
-  for (var v in allTrackerSubscribeUrls)
-    v: githubMirrorUrls(v, MirrorType.githubSource)
-};
 
 /// Represents a task that is pending URL update via listen mode.
 class PendingUpdateTask {
@@ -119,6 +102,8 @@ class AppController extends GetxController with WindowListener, TrayListener {
         
     if (Util.isDesktop()) {
       Get.put(NotificationService());
+      // Near real time task list + per connection stats for the progress bars.
+      Get.put(TaskStreamService());
     }
 
     _initTray().onError(
@@ -129,9 +114,6 @@ class AppController extends GetxController with WindowListener, TrayListener {
 
     _initForegroundTask().onError((error, stackTrace) =>
         logger.w("initForegroundTask error", error, stackTrace));
-
-    _initTrackerUpdate().onError((error, stackTrace) =>
-        logger.w("initTrackerUpdate error", error, stackTrace));
 
     _initLaunchAtStartup().onError((error, stackTrace) =>
         logger.w("initLaunchAtStartup error", error, stackTrace));
@@ -582,9 +564,7 @@ class AppController extends GetxController with WindowListener, TrayListener {
     }
 
     String path;
-    if (uri.scheme == "magnet" ||
-        uri.scheme == "http" ||
-        uri.scheme == "https") {
+    if (uri.scheme == "http" || uri.scheme == "https") {
       path = uri.toString();
     } else if (uri.scheme == "file") {
       path =
@@ -642,71 +622,6 @@ class AppController extends GetxController with WindowListener, TrayListener {
     return downloaderConfig.value;
   }
 
-  Future<void> trackerUpdate() async {
-    final btExtConfig = downloaderConfig.value.extra.bt;
-    final result = <String>[];
-    for (var u in btExtConfig.trackerSubscribeUrls) {
-      final cdns = allTrackerSubscribeUrlCdns[u];
-      if (cdns == null) {
-        continue;
-      }
-      try {
-        final trackers =
-            await Util.anyOk(cdns.map((cdn) => _fetchTrackers(cdn)));
-        result.addAll(trackers);
-      } catch (e) {
-        logger.w("subscribe trackers fail, url: $u", e);
-        return;
-      }
-    }
-    btExtConfig.subscribeTrackers.clear();
-    btExtConfig.subscribeTrackers.addAll(result);
-    downloaderConfig.update((val) {
-      val!.extra.bt.lastTrackerUpdateTime = DateTime.now();
-    });
-    refreshTrackers();
-
-    await saveConfig();
-  }
-
-  refreshTrackers() {
-    final btConfig = downloaderConfig.value.protocolConfig.bt;
-    final btExtConfig = downloaderConfig.value.extra.bt;
-    btConfig.trackers.clear();
-    btConfig.trackers.addAll(btExtConfig.subscribeTrackers);
-    btConfig.trackers.addAll(btExtConfig.customTrackers);
-    // remove duplicate
-    btConfig.trackers.toSet().toList();
-  }
-
-  Future<void> _initTrackerUpdate() async {
-    final btExtConfig = downloaderConfig.value.extra.bt;
-    final lastUpdateTime = btExtConfig.lastTrackerUpdateTime;
-    // if last update time is null or more than 1 day, update trackers
-    if (btExtConfig.autoUpdateTrackers &&
-        (lastUpdateTime == null ||
-            lastUpdateTime.difference(DateTime.now()).inDays < 0)) {
-      try {
-        await trackerUpdate();
-      } catch (e) {
-        logger.w("tracker update fail", e);
-      }
-    }
-  }
-
-  Future<List<String>> _fetchTrackers(String subscribeUrl) async {
-    final resp = await proxyRequest(subscribeUrl);
-    if (resp.statusCode != 200) {
-      throw Exception(
-          'Failed to get trackers, status code: ${resp.statusCode}');
-    }
-    if (resp.data == null || resp.data!.isEmpty) {
-      throw Exception('Failed to get trackers, data is null');
-    }
-    const ls = LineSplitter();
-    return ls.convert(resp.data!).where((e) => e.isNotEmpty).toList();
-  }
-
   _initDownloaderConfig() async {
     final config = downloaderConfig.value;
     final extra = config.extra;
@@ -719,11 +634,6 @@ class AppController extends GetxController with WindowListener, TrayListener {
           ? systemLocale
           : getLocaleKey(fallbackLocale);
     }
-    if (extra.bt.trackerSubscribeUrls.isEmpty) {
-      // default select all tracker subscribe urls
-      extra.bt.trackerSubscribeUrls.addAll(allTrackerSubscribeUrls);
-    }
-
     final proxy = config.proxy;
     if (proxy.scheme.isEmpty) {
       proxy.scheme = 'http';

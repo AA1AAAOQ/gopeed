@@ -24,7 +24,6 @@ const huHU = {
     'downloadLinkValid': 'Kérjük, adja meg a letöltési hivatkozást',
     'downloadLinkHit':
         'Kérjük, adja meg a letöltési hivatkozást, soronként egyet@append',
-    'downloadLinkHitDesktop': ', vagy húzza ide a torrent fájlt közvetlenül',
     'download': 'Letöltés',
     'noFileSelected': 'Kérjük, válasszon ki legalább egy fájlt a folytatáshoz.',
     'noStoragePermission': 'Tárolási engedély szükséges',
@@ -40,22 +39,14 @@ const huHU = {
     'maxRunning': 'Maximális futó feladatok',
     'defaultDirectDownload':
         'Alapértelmezettként ellenőrizze a közvetlen letöltést',
-    'autoTorrentEnable':
-        'BT feladatok automatikus létrehozása .torrent fájlokból',
-    'autoTorrentDeleteAfterDownload':
-        '.torrent fájl törlése a BT feladat létrehozása után',
     'autoDeleteMissingFileTasks':
         'Hiányzó fájlokkal rendelkező feladatok automatikus törlése',
     'items': '@count elem',
-    'subscribeTracker': 'Nyomkövető előfizetése',
     'subscribeFail':
         'Az előfizetés nem sikerült, kérjük, ellenőrizze a hálózatot, vagy próbálja újra később',
     'update': 'Frissítés',
     'updateDaily': 'Napi frissítés',
     'lastUpdate': 'Utolsó frissítés: @time',
-    'addTracker': 'Nyomkövető hozzáadása',
-    'addTrackerHit':
-        'Kérjük, adja meg a nyomkövető szerver URL-jét, soronként egyet',
     'ui': 'Felhasználói felület',
     'theme': 'Téma',
     'themeSystem': 'Rendszer',
@@ -115,11 +106,6 @@ const huHU = {
     'runAsMenubarApp': 'Futtatás menüsáv alkalmazásként',
     'runAsMenubarAppDesc':
         'Dock ikon elrejtése és csak a menüsávban való futtatás',
-    'seedConfig': 'Seed beállítás',
-    'seedKeep': 'Tartsa a seedet amíg manuálisan le nem állítják',
-    'seedRatio': 'Seed arány',
-    'seedTime': 'Seed idő (perc)',
-    'setAsDefaultBtClient': 'Alapértelmezett BT klienseként beállít',
     'taskDetail': 'Feladat részlete',
     'taskName': 'Feladat neve',
     'taskUrl': 'Feladat URL',
@@ -156,17 +142,6 @@ const huHU = {
     'categoryPath': 'Kategória útvonala',
     'builtInCategory': 'A beépített kategória nem törölhető',
     'selectCategory': 'Kategória kiválasztása',
-    'ed2k': 'ED2K',
-    'ed2kTcpPort': 'TCP Listen Port',
-    'ed2kUdpPort': 'UDP Listen Port',
-    'ed2kServerList': 'Server Addresses',
-    'ed2kServerMet': 'Server.met Sources',
-    'ed2kNodesDat': 'nodes.dat Sources',
-    'ed2kAutoPort': 'Auto assign',
-    'ed2kOnePerLine': 'One entry per line',
-    'ed2kServersHint': 'host:port, one per line',
-    'ed2kServerMetHint': 'Server.met URL or ed2k serverlist link, one per line',
-    'ed2kNodesDatHint': 'nodes.dat path or URL, one per line',
     'desktopNotification': 'Asztali értesítések',
     'notificationTaskDone': 'Feladat befejezve',
     'notificationTaskError': 'Feladat hiba',

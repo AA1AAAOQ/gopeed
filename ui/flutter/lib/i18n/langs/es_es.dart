@@ -22,8 +22,6 @@ const esES = {
     'downloadLinkValid': 'Por favor, introduce el enlace de descarga',
     'downloadLinkHit':
         'Por favor, introduce el enlace de descarga, se admite HTTP/HTTPS/MAGNET@append',
-    'downloadLinkHitDesktop':
-        ', o arrastra el archivo torrent aquí directamente',
     'download': 'Descargar',
     'noFileSelected':
         'Por favor, selecciona al menos un archivo para continuar.',
@@ -39,22 +37,14 @@ const esES = {
     'useServerCtime': 'Usar tiempo del servidor para la creación de archivos',
     'maxRunning': 'Máximo de Tareas en Ejecución',
     'autoStartTasks': 'Iniciar automáticamente tareas incompletas al arrancar',
-    'autoTorrentEnable':
-        'Crear automáticamente tareas BT desde archivos .torrent',
-    'autoTorrentDeleteAfterDownload':
-        'Eliminar archivo .torrent después de crear tarea BT',
     'autoDeleteMissingFileTasks':
         'Eliminar automáticamente tareas con archivos faltantes',
     'items': '@count elementos',
-    'subscribeTracker': 'Suscribirse al Tracker',
     'subscribeFail':
         'Suscripción fallida, por favor verifica la red o intenta más tarde',
     'update': 'Actualizar',
     'updateDaily': 'Actualizar diariamente',
     'lastUpdate': 'Última actualización: @time',
-    'addTracker': 'Añadir Tracker',
-    'addTrackerHit':
-        'Por favor, introduce la URL del servidor tracker, una por línea',
     'ui': 'Interfaz',
     'theme': 'Tema',
     'themeSystem': 'Sistema',
@@ -109,10 +99,6 @@ const esES = {
     'runAsMenubarApp': 'Ejecutar como aplicación de barra de menú',
     'runAsMenubarAppDesc':
         'Ocultar icono del Dock y ejecutar solo en la barra de menú',
-    'seedConfig': 'Configuración de Semilla',
-    'seedKeep': 'Mantener sembrado',
-    'seedRatio': 'Ratio de semilla',
-    'seedTime': 'Tiempo de semilla (minutos)',
     'taskDetail': 'Detalles de la Tarea',
     'taskName': 'Nombre de la Tarea',
     'taskUrl': 'URL de la Tarea',
@@ -142,17 +128,6 @@ const esES = {
     'categoryPath': 'Ruta de categoría',
     'builtInCategory': 'La categoría incorporada no se puede eliminar',
     'selectCategory': 'Seleccionar categoría',
-    'ed2k': 'ED2K',
-    'ed2kTcpPort': 'TCP Listen Port',
-    'ed2kUdpPort': 'UDP Listen Port',
-    'ed2kServerList': 'Server Addresses',
-    'ed2kServerMet': 'Server.met Sources',
-    'ed2kNodesDat': 'nodes.dat Sources',
-    'ed2kAutoPort': 'Auto assign',
-    'ed2kOnePerLine': 'One entry per line',
-    'ed2kServersHint': 'host:port, one per line',
-    'ed2kServerMetHint': 'Server.met URL or ed2k serverlist link, one per line',
-    'ed2kNodesDatHint': 'nodes.dat path or URL, one per line',
     'desktopNotification': 'Notificaciones de escritorio',
     'notificationTaskDone': 'Tarea completada',
     'notificationTaskError': 'Error de tarea',

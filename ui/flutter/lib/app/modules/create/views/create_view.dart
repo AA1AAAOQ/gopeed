@@ -56,14 +56,11 @@ class CreateView extends GetView<CreateController> {
       value: TextEditingController()
     ),
   ];
-  final _btTrackerController = TextEditingController();
   final _archivePasswordController = TextEditingController();
 
-  final _availableSchemes = ["http:", "https:", "magnet:", "ed2k:"];
+  final _availableSchemes = ["http:", "https:"];
 
   final _skipVerifyCertController = false.obs;
-  final _autoTorrentController = Rxn<bool>();
-  final _deleteTorrentAfterDownloadController = Rxn<bool>();
   final _autoExtractController = Rxn<bool>();
   final _deleteAfterExtractController = Rxn<bool>();
 
@@ -111,12 +108,6 @@ class CreateView extends GetView<CreateController> {
             });
             _skipVerifyCertController.value = routerParams.req!.skipVerifyCert;
           },
-          Protocol.bt: () {
-            final reqExtra = ReqExtraBt.fromJson(
-                jsonDecode(jsonEncode(routerParams.req!.extra)));
-            _btTrackerController.text = reqExtra.trackers.join("\n");
-          },
-          Protocol.ed2k: null,
         };
         if (routerParams.req?.extra != null) {
           extraHandlers[protocol]?.call();
@@ -139,8 +130,6 @@ class CreateView extends GetView<CreateController> {
                     optsExtraHttp.connections.toString();
               }
             },
-            Protocol.bt: null,
-            Protocol.ed2k: null,
           };
           if (routerParams.opts?.extra != null) {
             optionsHandlers[protocol]?.call();
@@ -161,8 +150,6 @@ class CreateView extends GetView<CreateController> {
                 TextPosition(offset: _urlController.text.length));
             return;
           }
-
-          recognizeMagnetUri(value!.text!);
         }
       });
     }
@@ -177,13 +164,11 @@ class CreateView extends GetView<CreateController> {
       ),
       body: DropTarget(
         onDragDone: (details) async {
-          if (!Util.isWeb()) {
-            _urlController.text = details.files[0].path;
-            return;
+          final path = details.files[0].path;
+          final upper = path.toUpperCase();
+          if (upper.startsWith("HTTP:") || upper.startsWith("HTTPS:")) {
+            _urlController.text = path;
           }
-          _urlController.text = details.files[0].name;
-          final bytes = await details.files[0].readAsBytes();
-          controller.setFileDataUri(bytes);
         },
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -226,28 +211,9 @@ class CreateView extends GetView<CreateController> {
                           },
                           onChanged: (v) async {
                             controller.clearFileDataUri();
-                            if (controller.oldUrl.value.isEmpty) {
-                              recognizeMagnetUri(v);
-                            }
                             controller.oldUrl.value = v;
                           },
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.folder_open),
-                        onPressed: () async {
-                          var pr = await FilePicker.platform.pickFiles(
-                              type: FileType.custom,
-                              allowedExtensions: ["torrent"]);
-                          if (pr != null) {
-                            if (!Util.isWeb()) {
-                              _urlController.text = pr.files[0].path ?? "";
-                              return;
-                            }
-                            _urlController.text = pr.files[0].name;
-                            controller.setFileDataUri(pr.files[0].bytes!);
-                          }
-                        },
                       ),
                       IconButton(
                         icon: const Icon(Icons.history_rounded),
@@ -512,13 +478,10 @@ class CreateView extends GetView<CreateController> {
                                     Tab(
                                       text: 'HTTP',
                                     ),
-                                    Tab(
-                                      text: 'BitTorrent',
-                                    ),
                                   ],
                                 ),
                                 DefaultTabController(
-                                  length: 2,
+                                  length: 1,
                                   child: ContentSizeTabBarView(
                                     controller:
                                         controller.advancedTabController,
@@ -601,51 +564,6 @@ class CreateView extends GetView<CreateController> {
                                               ),
                                             ),
                                           ),
-                                          // AutoTorrent options
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 10),
-                                            child: CompactCheckbox(
-                                              label: 'autoTorrentEnable'.tr,
-                                              value: _autoTorrentController
-                                                      .value ??
-                                                  false,
-                                              onChanged: (bool? value) {
-                                                _autoTorrentController.value =
-                                                    value ?? false;
-                                              },
-                                              textStyle: const TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                          Obx(
-                                            () => Visibility(
-                                              visible: _autoTorrentController
-                                                      .value ??
-                                                  false,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10, left: 20),
-                                                child: CompactCheckbox(
-                                                  label:
-                                                      'autoTorrentDeleteAfterDownload'
-                                                          .tr,
-                                                  value:
-                                                      _deleteTorrentAfterDownloadController
-                                                              .value ??
-                                                          false,
-                                                  onChanged: (bool? value) {
-                                                    _deleteTorrentAfterDownloadController
-                                                        .value = value ?? false;
-                                                  },
-                                                  textStyle: const TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
                                           // AutoExtract options
                                           Padding(
                                             padding:
@@ -719,17 +637,6 @@ class CreateView extends GetView<CreateController> {
                                           ),
                                         ],
                                       ),
-                                      Column(
-                                        children: [
-                                          TextFormField(
-                                              controller: _btTrackerController,
-                                              maxLines: 5,
-                                              decoration: InputDecoration(
-                                                labelText: 'Trackers',
-                                                hintText: 'addTrackerHit'.tr,
-                                              )),
-                                        ],
-                                      ),
                                     ],
                                   ),
                                 )
@@ -798,32 +705,10 @@ class CreateView extends GetView<CreateController> {
   // parse protocol from url
   parseProtocol(String url) {
     final uppercaseUrl = url.toUpperCase();
-    Protocol? protocol;
     if (uppercaseUrl.startsWith("HTTP:") || uppercaseUrl.startsWith("HTTPS:")) {
-      protocol = Protocol.http;
+      return Protocol.http;
     }
-    if (uppercaseUrl.startsWith("MAGNET:") ||
-        uppercaseUrl.endsWith(".TORRENT")) {
-      protocol = Protocol.bt;
-    }
-    if (uppercaseUrl.startsWith("ED2K:")) {
-      protocol = Protocol.ed2k;
-    }
-    return protocol;
-  }
-
-  // recognize magnet uri, if length == 40, auto add magnet prefix
-  recognizeMagnetUri(String text) {
-    if (text.length != 40) {
-      return;
-    }
-    final exp = RegExp(r"[0-9a-fA-F]+");
-    if (exp.hasMatch(text)) {
-      final uri = "magnet:?xt=urn:btih:$text";
-      _urlController.text = uri;
-      _urlController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _urlController.text.length));
-    }
+    return null;
   }
 
   Future<void> _doConfirm() async {
@@ -1007,11 +892,6 @@ class CreateView extends GetView<CreateController> {
         }
         break;
       case Protocol.bt:
-        if (_btTrackerController.text.trim().isNotEmpty) {
-          reqExtra = ReqExtraBt()
-            ..trackers = Util.textToLines(_btTrackerController.text);
-        }
-        break;
       case Protocol.ed2k:
       case null:
         break;
@@ -1022,8 +902,6 @@ class CreateView extends GetView<CreateController> {
   Object? parseReqOptsExtra() {
     return OptsExtraHttp()
       ..connections = int.tryParse(_connectionsController.text) ?? 0
-      ..autoTorrent = _autoTorrentController.value
-      ..deleteTorrentAfterDownload = _deleteTorrentAfterDownloadController.value
       ..autoExtract = _autoExtractController.value
       ..archivePassword = _archivePasswordController.text
       ..deleteAfterExtract = _deleteAfterExtractController.value ?? false;
@@ -1031,8 +909,7 @@ class CreateView extends GetView<CreateController> {
 
   String _hitText() {
     return 'downloadLinkHit'.trParams({
-      'append':
-          Util.isDesktop() || Util.isWeb() ? 'downloadLinkHitDesktop'.tr : '',
+      'append': '',
     });
   }
 

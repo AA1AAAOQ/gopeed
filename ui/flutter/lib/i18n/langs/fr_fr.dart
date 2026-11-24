@@ -22,7 +22,6 @@ const frFR = {
     'downloadLinkValid': 'Veuillez entrer le lien de téléchargement',
     'downloadLinkHit':
         'Veuillez entrer le lien de téléchargement, HTTP/HTTPS/MAGNET pris en charge',
-    'downloadLinkHitDesktop': ', ou glissez directement le fichier torrent ici',
     'download': 'Télécharger',
     'noFileSelected':
         'Veuillez sélectionner au moins un fichier pour continuer.',
@@ -40,22 +39,14 @@ const frFR = {
     'maxRunning': 'Tâches en cours maximum',
     'autoStartTasks':
         'Démarrer automatiquement les tâches incomplètes au lancement',
-    'autoTorrentEnable':
-        'Créer automatiquement des tâches BT à partir de fichiers .torrent',
-    'autoTorrentDeleteAfterDownload':
-        'Supprimer le fichier .torrent après création de tâche BT',
     'autoDeleteMissingFileTasks':
         'Supprimer automatiquement les tâches avec fichiers manquants',
     'items': '@count éléments',
-    'subscribeTracker': 'S\'abonner au tracker',
     'subscribeFail':
         'Abonnement échoué, veuillez vérifier le réseau ou réessayer plus tard',
     'update': 'Mettre à jour',
     'updateDaily': 'Mettre à jour quotidiennement',
     'lastUpdate': 'Dernière mise à jour : @time',
-    'addTracker': 'Ajouter un tracker',
-    'addTrackerHit':
-        'Veuillez entrer l\'URL du serveur de tracker, une par ligne',
     'ui': 'Interface utilisateur',
     'theme': 'Thème',
     'themeSystem': 'Système',
@@ -135,17 +126,6 @@ const frFR = {
     'categoryPath': 'Chemin de la catégorie',
     'builtInCategory': 'La catégorie intégrée ne peut pas être supprimée',
     'selectCategory': 'Sélectionner une catégorie',
-    'ed2k': 'ED2K',
-    'ed2kTcpPort': 'TCP Listen Port',
-    'ed2kUdpPort': 'UDP Listen Port',
-    'ed2kServerList': 'Server Addresses',
-    'ed2kServerMet': 'Server.met Sources',
-    'ed2kNodesDat': 'nodes.dat Sources',
-    'ed2kAutoPort': 'Auto assign',
-    'ed2kOnePerLine': 'One entry per line',
-    'ed2kServersHint': 'host:port, one per line',
-    'ed2kServerMetHint': 'Server.met URL or ed2k serverlist link, one per line',
-    'ed2kNodesDatHint': 'nodes.dat path or URL, one per line',
     'desktopNotification': 'Notifications de bureau',
     'notificationTaskDone': 'Tâche terminée',
     'notificationTaskError': 'Erreur de tâche',

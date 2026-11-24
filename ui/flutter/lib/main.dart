@@ -135,9 +135,7 @@ Future<void> init(StartupArgs args) async {
     if (Util.isDesktop()) {
       try {
         registerUrlScheme("gopeed");
-        if (controller.downloaderConfig.value.extra.defaultBtClient) {
-          registerDefaultTorrentClient();
-        }
+        unregisterDefaultTorrentClient();
       } catch (e) {
         logger.e("register scheme fail", e);
       }

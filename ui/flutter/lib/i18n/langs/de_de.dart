@@ -24,8 +24,6 @@ const deDE = {
     'downloadLinkValid': 'Bitte geben Sie den Download-Link ein',
     'downloadLinkHit':
         'Bitte geben Sie den Download-Link ein, einen pro Zeile@append',
-    'downloadLinkHitDesktop':
-        ', oder ziehen Sie die Torrent-Datei direkt hierher',
     'download': 'Download',
     'noFileSelected':
         'Bitte wählen Sie mindestens eine Datei aus, um fortzufahren.',
@@ -42,21 +40,13 @@ const deDE = {
     'maxRunning': 'Maximale Anzahl ausgeführter Aufgaben',
     'defaultDirectDownload': 'Direkten Download standardmäßig aktivieren',
     'autoStartTasks': 'Unvollständige Aufgaben beim Start automatisch starten',
-    'autoTorrentEnable':
-        'BT-Aufgaben automatisch aus .torrent-Dateien erstellen',
-    'autoTorrentDeleteAfterDownload':
-        '.torrent-Datei nach BT-Aufgabenerstellung löschen',
     'autoDeleteMissingFileTasks': 'Fehlende Dateiaufgaben automatisch löschen',
     'items': '@count Artikel',
-    'subscribeTracker': 'Abonnement-Tracker',
     'subscribeFail':
         'Anmeldung fehlgeschlagen. Bitte überprüfen Sie das Netzwerk oder versuchen Sie es später erneut.',
     'update': 'Aktualisieren',
     'updateDaily': 'Tägliche Aktualisierung',
     'lastUpdate': 'Letzte Aktualisierung: @time',
-    'addTracker': 'Tracker hinzufügen',
-    'addTrackerHit':
-        'Bitte geben Sie die URL des Tracker-Servers ein, eine pro Zeile',
     'ui': 'Benutzeroberfläche',
     'theme': 'Thema',
     'themeSystem': 'System',
@@ -115,11 +105,6 @@ const deDE = {
     'runAsMenubarApp': 'Als Menüleisten-App ausführen',
     'runAsMenubarAppDesc':
         'Dock-Symbol ausblenden und nur in der Menüleiste ausführen',
-    'seedConfig': 'Seed-Konfiguration',
-    'seedKeep': 'Weiter-seeden bis manuell gestoppt',
-    'seedRatio': 'Seed Verhältniss',
-    'seedTime': 'Seed-Zeit (Minuten)',
-    'setAsDefaultBtClient': 'Als Standard-BT-Client festlegen',
     'taskDetail': 'Aufgabendetails',
     'taskName': 'Aufgabenname',
     'taskUrl': 'Aufgaben-URL',
@@ -164,17 +149,6 @@ const deDE = {
     'categoryPath': 'Kategoriepfad',
     'builtInCategory': 'Integrierte Kategorie kann nicht gelöscht werden',
     'selectCategory': 'Kategorie auswählen',
-    'ed2k': 'ED2K',
-    'ed2kTcpPort': 'TCP Listen Port',
-    'ed2kUdpPort': 'UDP Listen Port',
-    'ed2kServerList': 'Server Addresses',
-    'ed2kServerMet': 'Server.met Sources',
-    'ed2kNodesDat': 'nodes.dat Sources',
-    'ed2kAutoPort': 'Auto assign',
-    'ed2kOnePerLine': 'One entry per line',
-    'ed2kServersHint': 'host:port, one per line',
-    'ed2kServerMetHint': 'Server.met URL or ed2k serverlist link, one per line',
-    'ed2kNodesDatHint': 'nodes.dat path or URL, one per line',
     'desktopNotification': 'Desktop-Benachrichtigungen',
     'notificationTaskDone': 'Aufgabe abgeschlossen',
     'notificationTaskError': 'Aufgabenfehler',

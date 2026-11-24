@@ -175,6 +175,8 @@ func (d *Downloader) Setup() error {
 		}
 	}
 
+	d.normalizeProtocolConfig()
+
 	// load tasks from storage
 	var tasks []*Task
 	if err = d.storage.List(bucketTask, &tasks); err != nil {
@@ -961,8 +963,47 @@ func (d *Downloader) GetConfig() (*base.DownloaderStoreConfig, error) {
 }
 
 func (d *Downloader) PutConfig(v *base.DownloaderStoreConfig) error {
+	if v == nil {
+		return nil
+	}
 	d.cfg.DownloaderStoreConfig = v
+	// The ui may send an incomplete config, make sure the http protocol is
+	// usable before saving it, an empty user agent makes servers reject the
+	// download requests.
+	d.normalizeProtocolConfig()
 	return d.storage.Put(bucketConfig, "config", v)
+}
+
+// normalizeProtocolConfig fills in the http protocol defaults that are required
+// for downloading: a non empty user agent and a sane connection count.
+func (d *Downloader) normalizeProtocolConfig() {
+	cfg := d.cfg.DownloaderStoreConfig
+	if cfg == nil {
+		return
+	}
+	if cfg.ProtocolConfig == nil {
+		cfg.ProtocolConfig = make(map[string]any)
+	}
+	raw, ok := cfg.ProtocolConfig["http"].(map[string]any)
+	if !ok || raw == nil {
+		raw = make(map[string]any)
+		cfg.ProtocolConfig["http"] = raw
+	}
+	if ua, _ := raw["userAgent"].(string); strings.TrimSpace(ua) == "" {
+		raw["userAgent"] = http.DefaultUserAgent
+	}
+	switch v := raw["connections"].(type) {
+	case float64:
+		if v <= 0 {
+			raw["connections"] = http.DefaultConnections
+		}
+	case int:
+		if v <= 0 {
+			raw["connections"] = http.DefaultConnections
+		}
+	case nil:
+		raw["connections"] = http.DefaultConnections
+	}
 }
 
 func (d *Downloader) getProtocolConfig(name string, v any) bool {
