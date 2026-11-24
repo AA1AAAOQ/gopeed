@@ -43,24 +43,57 @@ jobs:
           VERSION: ${{ env.APP_VERSION }}
         run: |
           $ErrorActionPreference = "Stop"
+
           go build -tags nosqlite -ldflags="-w -s -X github.com/GopeedLab/gopeed/pkg/base.Version=$env:VERSION" -buildmode=c-shared -o ui/flutter/windows/libgopeed.dll github.com/GopeedLab/gopeed/bind/desktop
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           go build -ldflags="-w -s" -o ui/flutter/assets/exec/host.exe github.com/GopeedLab/gopeed/cmd/host
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           go build -ldflags="-w -s" -o ui/flutter/assets/exec/updater.exe github.com/GopeedLab/gopeed/cmd/updater
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
           cd ui/flutter
           flutter pub get
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           flutter build windows --dart-define="UPDATE_CHANNEL=windowsPortable"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
           $TAG = "v$env:VERSION"
           $release = "build\windows\x64\runner\Release"
-          $mingw = "C:\Program Files\Git\mingw64\bin"
-          $system = "C:\Windows\System32"
-          Copy-Item "$mingw\libstdc++-6.dll" $release -Force
-          Copy-Item "$mingw\libgcc_s_seh-1.dll" $release -Force
-          Copy-Item "$mingw\libwinpthread-1.dll" $release -Force
-          Copy-Item "$system\msvcp140.dll" $release -Force
-          Copy-Item "$system\vcruntime140.dll" $release -Force
-          Copy-Item "$system\vcruntime140_1.dll" $release -Force
+
+          # Git for Windows no longer ships libstdc++-6.dll in newer releases,
+          # look for the mingw runtime in every usual place instead.
+          $gcc = Get-Command gcc.exe -ErrorAction SilentlyContinue
+          $candidates = @()
+          if ($gcc) { $candidates += (Split-Path $gcc.Source -Parent) }
+          $candidates += @(
+            "C:\tools\msys64\mingw64\bin",
+            "C:\msys64\mingw64\bin",
+            "C:\Program Files\Git\mingw64\bin",
+            "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
+          )
+          function Copy-MingwDll($name, $dest) {
+            foreach ($dir in $candidates) {
+              if (-not (Test-Path $dir)) { continue }
+              $p = Join-Path $dir $name
+              if (Test-Path $p) {
+                Copy-Item $p $dest -Force
+                Write-Host "copied $name from $dir"
+                return
+              }
+            }
+            Write-Warning "mingw dll not found, skipped: $name"
+          }
+          foreach ($name in @("libstdc++-6.dll", "libgcc_s_seh-1.dll", "libwinpthread-1.dll")) {
+            Copy-MingwDll $name $release
+          }
+          foreach ($name in @("msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll")) {
+            $src = Join-Path $env:SystemRoot "System32\$name"
+            if (Test-Path $src) {
+              Copy-Item $src $release -Force
+            } else {
+              Write-Warning "system dll not found, skipped: $name"
+            }
+          }
 
           New-Item -Path build\windows\Output -ItemType Directory -Force | Out-Null
           Compress-Archive -Path "$release\*" -DestinationPath "build\windows\Output\Gopeed-$TAG-windows-amd64-portable.zip" -Force
