@@ -41,7 +41,8 @@ class TaskSegmentsBar extends StatelessWidget {
         return LinearProgressIndicator(value: progress);
       }
       final completed = connections.where((c) => c.completed).length;
-      final text = '${connections.length} 连接 · $completed 已完成';
+      // Language neutral summary, the segments are slices of the file now.
+      final text = '$completed/${connections.length}';
       return Tooltip(
         message: text,
         waitDuration: const Duration(milliseconds: 400),
