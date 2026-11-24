@@ -556,6 +556,7 @@ func (f *Fetcher) stopPrefetchAndCopyData() int64 {
 			n, err := f.prefetchFile.Read(buf)
 			if n > 0 {
 				f.file.WriteAt(buf[:n], copied)
+				f.addPartProgress(copied, int64(n))
 				copied += int64(n)
 			}
 			if err != nil {
