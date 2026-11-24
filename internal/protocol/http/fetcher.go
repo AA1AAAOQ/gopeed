@@ -223,6 +223,15 @@ type Fetcher struct {
 	connections []*connection
 	resolveConn *connection // The special resolve connection
 
+	// Partition progress: the file is split into fixed slices, every written
+	// byte is counted into the slice it belongs to. Work stealing moves ranges
+	// between connections, so this is the only stable way to show the progress
+	// of a slice of the file to the ui.
+	partMu    sync.Mutex
+	partTotal int64
+	partSize  int64
+	partDone  []int64
+
 	// Slow start controller
 	slowStart *slowStartController
 
@@ -618,7 +627,10 @@ func (f *Fetcher) doStart() error {
 		for _, conn := range f.connections {
 			// Reset connections that can be retried
 			if !conn.Completed && conn.State != connCompleted {
-				f.resetConnectionForRestart(conn)
+				if conn.Chunk != nil && conn.Chunk.Downloaded > 0 {
+			f.seedPartProgress(conn.Chunk.Begin, conn.Chunk.Downloaded)
+		}
+		f.resetConnectionForRestart(conn)
 				conn.State = connNotStarted
 				conn.failed = false
 				conn.retryTimes = 0
@@ -778,6 +790,7 @@ func (f *Fetcher) expandConnections() {
 	}
 
 	totalSize := f.meta.Res.Size
+	f.initPartitions(totalSize)
 
 	f.connMu.Lock()
 
@@ -1094,6 +1107,7 @@ func (f *Fetcher) downloadChunkOnce(conn *connection, client *http.Client, buf [
 				}
 			}
 			f.fileMu.Unlock()
+			f.addPartProgress(writeOffset, int64(n))
 
 			// Lock again to update Downloaded atomically with the read above
 			f.connMu.Lock()
@@ -1177,7 +1191,8 @@ func (f *Fetcher) runConnectionWithResolveResp(conn *connection) {
 		if n > 0 {
 			f.fileMu.Lock()
 			if f.file != nil {
-				_, writeErr := f.file.WriteAt(buf[:n], conn.Chunk.Downloaded)
+				writeOffset := conn.Chunk.Downloaded
+				_, writeErr := f.file.WriteAt(buf[:n], writeOffset)
 				if writeErr != nil {
 					f.fileMu.Unlock()
 					f.connMu.Lock()
@@ -1191,6 +1206,7 @@ func (f *Fetcher) runConnectionWithResolveResp(conn *connection) {
 				}
 			}
 			f.fileMu.Unlock()
+			f.addPartProgress(writeOffset, int64(n))
 
 			conn.Chunk.Downloaded += int64(n)
 			conn.Downloaded += int64(n)
@@ -1279,13 +1295,15 @@ func (f *Fetcher) runConnectionFallback(conn *connection) {
 				if n > 0 {
 					f.fileMu.Lock()
 					if f.file != nil {
-						_, writeErr := f.file.WriteAt(buf[:n], conn.Chunk.Downloaded)
+						writeOffset := conn.Chunk.Downloaded
+				_, writeErr := f.file.WriteAt(buf[:n], writeOffset)
 						if writeErr != nil {
 							f.fileMu.Unlock()
 							return writeErr
 						}
 					}
 					f.fileMu.Unlock()
+					f.addPartProgress(writeOffset, int64(n))
 
 					conn.Chunk.Downloaded += int64(n)
 					conn.Downloaded += int64(n)
@@ -1457,6 +1475,9 @@ func (f *Fetcher) resumeConnections() {
 			if conn.retryTimes >= 3 {
 				continue
 			}
+		}
+		if conn.Chunk != nil && conn.Chunk.Downloaded > 0 {
+			f.seedPartProgress(conn.Chunk.Begin, conn.Chunk.Downloaded)
 		}
 		f.resetConnectionForRestart(conn)
 		// Reset the connection state for resume
@@ -1720,11 +1741,120 @@ func (f *Fetcher) Meta() *fetcher.FetcherMeta {
 	return f.meta
 }
 
+// initPartitions splits the file into fixed slices, the ui draws one segment per
+// slice, which is what makes the bar look like IDM: every segment has a stable
+// position and its own progress.
+func (f *Fetcher) initPartitions(total int64) {
+	if total <= 0 {
+		return
+	}
+	n := 1
+	if f.config != nil && f.config.Connections > 0 {
+		n = f.config.Connections
+	}
+	if n > 256 {
+		n = 256
+	}
+	size := (total + int64(n) - 1) / int64(n)
+	if size <= 0 {
+		size = 1
+	}
+	done := make([]int64, n)
+
+	f.partMu.Lock()
+	f.partTotal = total
+	f.partSize = size
+	f.partDone = done
+	f.partMu.Unlock()
+}
+
+// addPartProgress counts bytes written to the file into the slices they belong
+// to. Re-downloaded bytes (work stealing rewrites a range) do not push a slice
+// past its own size.
+func (f *Fetcher) addPartProgress(offset int64, n int64) {
+	if n <= 0 || offset < 0 {
+		return
+	}
+	f.partMu.Lock()
+	defer f.partMu.Unlock()
+	if len(f.partDone) == 0 || f.partSize <= 0 {
+		return
+	}
+	end := offset + n
+	for offset < end {
+		idx := int(offset / f.partSize)
+		if idx >= len(f.partDone) {
+			break
+		}
+		sliceEnd := int64(idx+1) * f.partSize
+		chunk := end - offset
+		if chunk > sliceEnd-offset {
+			chunk = sliceEnd - offset
+		}
+		limit := f.partSize
+		if rest := f.partTotal - int64(idx)*f.partSize; rest < limit {
+			limit = rest
+		}
+		f.partDone[idx] += chunk
+		if f.partDone[idx] > limit {
+			f.partDone[idx] = limit
+		}
+		offset += chunk
+	}
+}
+
+// seedPartProgress marks an already downloaded range (resumed tasks) as done.
+func (f *Fetcher) seedPartProgress(offset int64, n int64) {
+	f.addPartProgress(offset, n)
+}
+
 func (f *Fetcher) Stats() any {
+	var total int64
+	if f.meta != nil && f.meta.Res != nil {
+		total = f.meta.Res.Size
+	}
+
+	f.partMu.Lock()
+	done := make([]int64, len(f.partDone))
+	copy(done, f.partDone)
+	sliceSize := f.partSize
+	f.partMu.Unlock()
+
+	statsConnections := make([]*fhttp.StatsConnection, 0, len(done))
+	if len(done) > 0 && sliceSize > 0 && total > 0 {
+		for i, bytes := range done {
+			begin := int64(i) * sliceSize
+			end := begin + sliceSize - 1
+			if end >= total {
+				end = total - 1
+			}
+			if begin > end {
+				continue
+			}
+			size := end - begin + 1
+			completed := bytes >= size
+			state := "downloading"
+			if completed {
+				state = "completed"
+			} else if bytes == 0 {
+				state = "notStarted"
+			}
+			statsConnections = append(statsConnections, &fhttp.StatsConnection{
+				ID:         i,
+				Role:       "partition",
+				State:      state,
+				Begin:      begin,
+				End:        end,
+				Downloaded: bytes,
+				Completed:  completed,
+			})
+		}
+		return &fhttp.Stats{Total: total, Connections: statsConnections}
+	}
+
+	// Fallback for downloads without a known size: report the live connections.
 	f.connMu.Lock()
 	defer f.connMu.Unlock()
-
-	statsConnections := make([]*fhttp.StatsConnection, 0)
 	for _, connection := range f.connections {
 		if connection.Chunk == nil {
 			continue
@@ -1760,14 +1890,7 @@ func (f *Fetcher) Stats() any {
 			RetryTimes: connection.retryTimes,
 		})
 	}
-	var total int64
-	if f.meta != nil && f.meta.Res != nil {
-		total = f.meta.Res.Size
-	}
-	return &fhttp.Stats{
-		Total:       total,
-		Connections: statsConnections,
-	}
+	return &fhttp.Stats{Total: total, Connections: statsConnections}
 }
 
 func (f *Fetcher) Progress() fetcher.Progress {
