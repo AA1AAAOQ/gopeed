@@ -130,6 +130,7 @@ func BuildServer(startCfg *model.StartConfig) (*http.Server, net.Listener, error
 	r.Methods(http.MethodPut).Path("/api/v1/tasks/continue").HandlerFunc(ContinueTasks)
 	r.Methods(http.MethodDelete).Path("/api/v1/tasks/{id}").HandlerFunc(DeleteTask)
 	r.Methods(http.MethodDelete).Path("/api/v1/tasks").HandlerFunc(DeleteTasks)
+	r.Methods(http.MethodGet).Path("/api/v1/tasks/stream").HandlerFunc(StreamTasks)
 	r.Methods(http.MethodGet).Path("/api/v1/tasks/{id}").HandlerFunc(GetTask)
 	r.Methods(http.MethodGet).Path("/api/v1/tasks").HandlerFunc(GetTasks)
 	r.Methods(http.MethodGet).Path("/api/v1/tasks/{id}/stats").HandlerFunc(GetStats)

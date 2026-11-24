@@ -1,10 +1,12 @@
 package rest
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/url"
 	"runtime"
+	"time"
 
 	"github.com/GopeedLab/gopeed/pkg/base"
 	"github.com/GopeedLab/gopeed/pkg/download"
@@ -352,6 +354,86 @@ func DoProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(buf)
+}
+
+// StreamTasks pushes the task list and the per connection stats over
+// server-sent events, so the ui can update in near real time instead of
+// polling the task endpoints.
+//
+// Every event is a normal result envelope: {"code":0,"data":{...}} where data
+// may hold "tasks" (the full list, only sent when it changed) and "stats" (the
+// per connection progress of the running tasks, keyed by task id).
+func StreamTasks(w http.ResponseWriter, r *http.Request) {
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		WriteJson(w, model.NewErrorResult("streaming is not supported"))
+		return
+	}
+	h := w.Header()
+	h.Set("Content-Type", "text/event-stream")
+	h.Set("Cache-Control", "no-cache")
+	h.Set("Connection", "keep-alive")
+	h.Set("X-Accel-Buffering", "no")
+	w.WriteHeader(http.StatusOK)
+	flusher.Flush()
+
+	ctx := r.Context()
+	interval := 100 * time.Millisecond
+	idleInterval := time.Second
+	var lastTasks string
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(interval):
+		}
+
+		tasks := Downloader.GetTasks()
+		active := false
+		stats := make(map[string]any)
+		for _, task := range tasks {
+			if task.Status == base.DownloadStatusRunning || task.Status == base.DownloadStatusReady {
+				active = true
+				if sr, err := Downloader.Stats(task.ID); err == nil && sr != nil {
+					stats[task.ID] = sr
+				}
+			}
+		}
+		tasksBuf, err := json.Marshal(tasks)
+		if err != nil {
+			return
+		}
+		// The task list only changes on state transitions while the stats change
+		// all the time, so an unchanged list is not sent again.
+		var payload map[string]any
+		if active && lastTasks == string(tasksBuf) {
+			payload = map[string]any{"stats": stats}
+		} else {
+			payload = map[string]any{"tasks": json.RawMessage(tasksBuf), "stats": stats}
+			lastTasks = string(tasksBuf)
+		}
+		buf, err := json.Marshal(model.NewOkResult(payload))
+		if err != nil {
+			return
+		}
+		if _, err := w.Write([]byte("data: ")); err != nil {
+			return
+		}
+		if _, err := w.Write(buf); err != nil {
+			return
+		}
+		if _, err := w.Write([]byte("\n\n")); err != nil {
+			return
+		}
+		flusher.Flush()
+
+		if active {
+			interval = 100 * time.Millisecond
+		} else {
+			interval = idleInterval
+		}
+	}
 }
 
 func GetStats(w http.ResponseWriter, r *http.Request) {

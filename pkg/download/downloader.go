@@ -190,7 +190,18 @@ func (d *Downloader) Setup() error {
 				tasks = append(tasks[:i], tasks[i+1:]...)
 				continue
 			}
-			d.assignFetcherManager(task)
+			// Tasks whose protocol is no longer available are left in storage
+			// but hidden from the list, so the old records are not lost.
+			if !d.isProtocolSupported(task.Protocol) {
+				d.Logger.Info().Msgf("protocol %q is no longer supported, hide task: %s", task.Protocol, task.ID)
+				tasks = append(tasks[:i], tasks[i+1:]...)
+				continue
+			}
+			if err := d.assignFetcherManager(task); err != nil {
+				d.Logger.Warn().Err(err).Msgf("assign fetcher manager failed, hide task: %s", task.ID)
+				tasks = append(tasks[:i], tasks[i+1:]...)
+				continue
+			}
 			initTask(task)
 			if task.Status != base.DownloadStatusDone && task.Status != base.DownloadStatusError {
 				task.Status = base.DownloadStatusPause
@@ -1037,43 +1048,6 @@ func (d *Downloader) watch(task *Task) {
 
 		cfg, _ := d.GetConfig()
 
-		// Determine if auto-torrent is enabled (use global config if not explicitly set)
-		autoTorrentEnabled := false
-		if e.AutoTorrent != nil {
-			autoTorrentEnabled = *e.AutoTorrent
-		} else if cfg != nil && cfg.AutoTorrent != nil {
-			autoTorrentEnabled = cfg.AutoTorrent.Enable
-		}
-
-		if autoTorrentEnabled && strings.HasSuffix(downloadFilePath, ".torrent") {
-			// Determine if should delete torrent file after creating BT task
-			shouldDelete := false
-			if e.DeleteTorrentAfterDownload != nil {
-				shouldDelete = *e.DeleteTorrentAfterDownload
-			} else if cfg != nil && cfg.AutoTorrent != nil {
-				shouldDelete = cfg.AutoTorrent.DeleteAfterDownload
-			}
-
-			go func() {
-				_, err2 := d.CreateDirect(
-					&base.Request{
-						URL: downloadFilePath,
-					},
-					&base.Options{
-						Path:        task.Meta.Opts.Path,
-						SelectFiles: make([]int, 0),
-					})
-				if err2 != nil {
-					d.Logger.Error().Err(err2).Msgf("auto create torrent task failed, task id: %s", task.ID)
-					return
-				}
-
-				if shouldDelete {
-					d.Delete(&TaskFilter{IDs: []string{task.ID}}, true)
-				}
-			}()
-		}
-
 		// Determine if auto-extract is enabled (use global config if not explicitly set)
 		autoExtractEnabled := false
 		if e.AutoExtract != nil {
@@ -1364,6 +1338,21 @@ func logPanic(logDir string) {
 		return
 	}
 	debug.SetCrashOutput(f, debug.CrashOptions{})
+}
+
+// isProtocolSupported reports whether a registered fetcher manager handles the
+// protocol. An empty protocol (very old record) is left to the URL based
+// resolution in assignFetcherManager.
+func (d *Downloader) isProtocolSupported(protocol string) bool {
+	if protocol == "" {
+		return true
+	}
+	for _, fm := range d.cfg.FetchManagers {
+		if fm.Name() == protocol {
+			return true
+		}
+	}
+	return false
 }
 
 func (d *Downloader) assignFetcherManager(task *Task) error {

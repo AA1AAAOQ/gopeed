@@ -25,11 +25,26 @@ type OptsExtra struct {
 
 // Stats for download
 type Stats struct {
+	// Total is the total size of the resource in bytes, 0 when unknown
+	Total       int64              `json:"total"`
 	Connections []*StatsConnection `json:"connections"`
 }
 
+// StatsConnection is the per connection progress of a running download.
 type StatsConnection struct {
+	// ID is the connection index, stable for the lifetime of the task
+	ID int `json:"id"`
+	// Role is one of resolve / primary / worker
+	Role string `json:"role"`
+	// State is one of notStarted / connecting / downloading / completed / failed
+	State string `json:"state"`
+	// Begin and End are the inclusive byte range the connection is responsible for
+	Begin int64 `json:"begin"`
+	End   int64 `json:"end"`
+	// Downloaded is the bytes already written inside [Begin, End]
 	Downloaded int64 `json:"downloaded"`
+	// Speed is the recent speed of this connection in bytes per second
+	Speed      int64 `json:"speed"`
 	Completed  bool  `json:"completed"`
 	Failed     bool  `json:"failed"`
 	RetryTimes int   `json:"retryTimes"`

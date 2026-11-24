@@ -1726,14 +1726,46 @@ func (f *Fetcher) Stats() any {
 
 	statsConnections := make([]*fhttp.StatsConnection, 0)
 	for _, connection := range f.connections {
+		if connection.Chunk == nil {
+			continue
+		}
+		state := "notStarted"
+		switch connection.State {
+		case connConnecting:
+			state = "connecting"
+		case connDownloading:
+			state = "downloading"
+		case connCompleted:
+			state = "completed"
+		case connFailed:
+			state = "failed"
+		}
+		role := "worker"
+		switch connection.Role {
+		case roleResolve:
+			role = "resolve"
+		case rolePrimary:
+			role = "primary"
+		}
 		statsConnections = append(statsConnections, &fhttp.StatsConnection{
-			Downloaded: connection.Downloaded,
+			ID:         connection.ID,
+			Role:       role,
+			State:      state,
+			Begin:      connection.Chunk.Begin,
+			End:        connection.Chunk.End,
+			Downloaded: connection.Chunk.Downloaded,
+			Speed:      connection.speed,
 			Completed:  connection.Completed,
 			Failed:     connection.failed,
 			RetryTimes: connection.retryTimes,
 		})
 	}
+	var total int64
+	if f.meta != nil && f.meta.Res != nil {
+		total = f.meta.Res.Size
+	}
 	return &fhttp.Stats{
+		Total:       total,
 		Connections: statsConnections,
 	}
 }

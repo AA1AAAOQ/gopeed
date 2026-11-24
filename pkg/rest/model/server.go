@@ -37,7 +37,7 @@ func (cfg *StartConfig) Init() *StartConfig {
 		cfg.Address = "127.0.0.1:0"
 	}
 	if cfg.RefreshInterval == 0 {
-		cfg.RefreshInterval = 350
+		cfg.RefreshInterval = 100
 	}
 	if cfg.Storage == "" {
 		cfg.Storage = StorageBolt
