@@ -20,8 +20,7 @@ const taTA = {
     'advancedOptions': 'மேம்பட்ட விருப்பங்கள்',
     'downloadLink': 'தரவிறக்க இணைப்பு',
     'downloadLinkValid': 'பதிவிறக்க இணைப்பை உள்ளிடவும்',
-    'downloadLinkHit':
-        'பதிவிறக்க இணைப்பை உள்ளிடவும், HTTP/HTTPS/MAGNET ஆகியவற்றை ஏற்கும்@append',
+    'downloadLinkHit': 'பதிவிறக்க இணைப்பை உள்ளிடவும், HTTP/HTTPS/MAGNET ஆகியவற்றை ஏற்கும்@append',
     'download': 'பதிவிறக்கு',
     'noFileSelected': 'குறைந்தபட்சம் ஒரு கோப்பைத் தேர்ந்தெடுக்கவும்.',
     'noStoragePermission': 'சேமிப்பக அனுமதி தேவை',
@@ -35,11 +34,9 @@ const taTA = {
     'connections': 'தொடர்புகள்',
     'useServerCtime': 'Use server time for file creation',
     'maxRunning': 'அதிகபட்ச இயங்கும் பணிகள்',
-    'autoDeleteMissingFileTasks':
-        'காணாமல் போன கோப்புகளுடன் பணிகளை தானாக நீக்கு',
+    'autoDeleteMissingFileTasks': 'காணாமல் போன கோப்புகளுடன் பணிகளை தானாக நீக்கு',
     'items': '@count items',
-    'subscribeFail':
-        'Subscribe failed, please check network or try again later',
+    'subscribeFail': 'Subscribe failed, please check network or try again later',
     'update': 'புதுப்பிக்கவும்',
     'updateDaily': 'தினமும் புதுப்பிக்கவும்',
     'lastUpdate': 'கடைசியாக புதுப்பிக்கப்பட்டது: @time',
@@ -90,8 +87,7 @@ const taTA = {
     'username': 'பயனர் பெயர்',
     'password': 'கடவுச்சொல்',
     'thanks': 'நன்றி',
-    'thanksDesc':
-        'Gopeed சமூகத்தை உருவாக்கவும் மற்றும் மேம்படுத்த உதவிய அனைத்து பங்களிப்பாளர்களுக்கும் நன்றி!',
+    'thanksDesc': 'Gopeed சமூகத்தை உருவாக்கவும் மற்றும் மேம்படுத்த உதவிய அனைத்து பங்களிப்பாளர்களுக்கும் நன்றி!',
     'browserExtension': 'உலாவி நீட்டிப்பு',
     'launchAtStartup': 'தொடக்கத்தின் போது இயங்கு',
     'runAsMenubarApp': 'மெனுபார் பயன்பாடாக இயக்கு',

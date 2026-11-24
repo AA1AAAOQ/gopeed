@@ -22,11 +22,9 @@ const deDE = {
     'followSettings': 'Einstellungen Folgen',
     'downloadLink': 'Download Link',
     'downloadLinkValid': 'Bitte geben Sie den Download-Link ein',
-    'downloadLinkHit':
-        'Bitte geben Sie den Download-Link ein, einen pro Zeile@append',
+    'downloadLinkHit': 'Bitte geben Sie den Download-Link ein, einen pro Zeile@append',
     'download': 'Download',
-    'noFileSelected':
-        'Bitte wählen Sie mindestens eine Datei aus, um fortzufahren.',
+    'noFileSelected': 'Bitte wählen Sie mindestens eine Datei aus, um fortzufahren.',
     'noStoragePermission': 'Speicherberechtigung erforderlich',
     'selectFile': 'Datei auswählen',
     'rename': 'Umbenennen',
@@ -42,8 +40,7 @@ const deDE = {
     'autoStartTasks': 'Unvollständige Aufgaben beim Start automatisch starten',
     'autoDeleteMissingFileTasks': 'Fehlende Dateiaufgaben automatisch löschen',
     'items': '@count Artikel',
-    'subscribeFail':
-        'Anmeldung fehlgeschlagen. Bitte überprüfen Sie das Netzwerk oder versuchen Sie es später erneut.',
+    'subscribeFail': 'Anmeldung fehlgeschlagen. Bitte überprüfen Sie das Netzwerk oder versuchen Sie es später erneut.',
     'update': 'Aktualisieren',
     'updateDaily': 'Tägliche Aktualisierung',
     'lastUpdate': 'Letzte Aktualisierung: @time',
@@ -98,13 +95,11 @@ const deDE = {
     'username': 'Benutzername',
     'password': 'Passwort',
     'thanks': 'Danke',
-    'thanksDesc':
-        'Vielen Dank an alle Mitwirkenden, die beim Aufbau und der Entwicklung der Gopeed-Community geholfen haben!',
+    'thanksDesc': 'Vielen Dank an alle Mitwirkenden, die beim Aufbau und der Entwicklung der Gopeed-Community geholfen haben!',
     'browserExtension': 'Browsererweiterung',
     'launchAtStartup': 'Beim Start starten',
     'runAsMenubarApp': 'Als Menüleisten-App ausführen',
-    'runAsMenubarAppDesc':
-        'Dock-Symbol ausblenden und nur in der Menüleiste ausführen',
+    'runAsMenubarAppDesc': 'Dock-Symbol ausblenden und nur in der Menüleiste ausführen',
     'taskDetail': 'Aufgabendetails',
     'taskName': 'Aufgabenname',
     'taskUrl': 'Aufgaben-URL',
@@ -130,10 +125,8 @@ const deDE = {
     'username_required': 'Bitte geben Sie Ihren Benutzernamen ein',
     'password_required': 'Bitte geben Sie Ihr Passwort ein',
     'login_success': 'Anmeldung erfolgreich',
-    'login_failed':
-        'Anmeldung fehlgeschlagen, bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort',
-    'login_failed_network':
-        'Anmeldung fehlgeschlagen, bitte überprüfen Sie Ihre Netzwerkverbindung',
+    'login_failed': 'Anmeldung fehlgeschlagen, bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort',
+    'login_failed_network': 'Anmeldung fehlgeschlagen, bitte überprüfen Sie Ihre Netzwerkverbindung',
     'insertPlaceholder': 'Platzhalter einfügen',
     'placeholderYear': 'Aktuelles Jahr',
     'placeholderMonth': 'Aktueller Monat (01-12)',

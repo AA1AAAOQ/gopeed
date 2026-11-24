@@ -40,8 +40,7 @@ const enUS = {
     'autoStartTasks': 'Auto-start incomplete tasks on startup',
     'autoDeleteMissingFileTasks': 'Auto delete missing file tasks',
     'items': '@count items',
-    'subscribeFail':
-        'Subscribe failed, please check network or try again later',
+    'subscribeFail': 'Subscribe failed, please check network or try again later',
     'update': 'Update',
     'updateDaily': 'Update daily',
     'lastUpdate': 'Last update: @time',
@@ -135,15 +134,13 @@ const enUS = {
     'username': 'Username',
     'password': 'Password',
     'thanks': 'Thanks',
-    'thanksDesc':
-        'Thanks to all the contributors who have helped build and develop the Gopeed community!',
+    'thanksDesc': 'Thanks to all the contributors who have helped build and develop the Gopeed community!',
     'browserExtension': 'Browser Extension',
     'launchAtStartup': 'Launch at Startup',
     'runAsMenubarApp': 'Run as menubar app',
     'runAsMenubarAppDesc': 'Hide dock icon and run in menubar only',
     'popupTiming': 'Popup Timing',
-    'popupTimingDesc':
-        'When the main window should pop up, the task page is switched to the matching tab',
+    'popupTimingDesc': 'When the main window should pop up, the task page is switched to the matching tab',
     'popupTimingOff': 'Never',
     'popupTimingStart': 'When a task starts',
     'popupTimingDone': 'When a task ends',
@@ -175,8 +172,7 @@ const enUS = {
     'password_required': 'Please enter your password',
     'login_success': 'Login successful',
     'login_failed': 'Login failed, please check your username and password',
-    'login_failed_network':
-        'Login failed, please check your network connection',
+    'login_failed_network': 'Login failed, please check your network connection',
     'insertPlaceholder': 'Insert Placeholder',
     'placeholderYear': 'Current year',
     'placeholderMonth': 'Current month (01-12)',
@@ -205,8 +201,7 @@ const enUS = {
     'updateUrlCancelListen': 'Cancel Listen',
     'updateUrlDialogHint': 'Enter new download URL',
     'pendingUpdateFound': 'Pending Update Task Found',
-    'pendingUpdateConfirm':
-        'Task "@name" is waiting for URL update. Do you want to update it with the new URL?',
+    'pendingUpdateConfirm': 'Task "@name" is waiting for URL update. Do you want to update it with the new URL?',
     'pendingUpdateYes': 'Update Task',
     'pendingUpdateNo': 'Create New Task',
     'desktopNotification': 'Desktop Notifications',

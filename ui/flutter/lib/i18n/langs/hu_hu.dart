@@ -22,8 +22,7 @@ const huHU = {
     'followSettings': 'Beállítások követése',
     'downloadLink': 'Letöltési hivatkozás',
     'downloadLinkValid': 'Kérjük, adja meg a letöltési hivatkozást',
-    'downloadLinkHit':
-        'Kérjük, adja meg a letöltési hivatkozást, soronként egyet@append',
+    'downloadLinkHit': 'Kérjük, adja meg a letöltési hivatkozást, soronként egyet@append',
     'download': 'Letöltés',
     'noFileSelected': 'Kérjük, válasszon ki legalább egy fájlt a folytatáshoz.',
     'noStoragePermission': 'Tárolási engedély szükséges',
@@ -37,13 +36,10 @@ const huHU = {
     'connections': 'Kapcsolatok',
     'useServerCtime': 'Használja a szerveridőt a fájl létrehozásához',
     'maxRunning': 'Maximális futó feladatok',
-    'defaultDirectDownload':
-        'Alapértelmezettként ellenőrizze a közvetlen letöltést',
-    'autoDeleteMissingFileTasks':
-        'Hiányzó fájlokkal rendelkező feladatok automatikus törlése',
+    'defaultDirectDownload': 'Alapértelmezettként ellenőrizze a közvetlen letöltést',
+    'autoDeleteMissingFileTasks': 'Hiányzó fájlokkal rendelkező feladatok automatikus törlése',
     'items': '@count elem',
-    'subscribeFail':
-        'Az előfizetés nem sikerült, kérjük, ellenőrizze a hálózatot, vagy próbálja újra később',
+    'subscribeFail': 'Az előfizetés nem sikerült, kérjük, ellenőrizze a hálózatot, vagy próbálja újra később',
     'update': 'Frissítés',
     'updateDaily': 'Napi frissítés',
     'lastUpdate': 'Utolsó frissítés: @time',
@@ -61,8 +57,7 @@ const huHU = {
     'apiToken': 'API token',
     'notSet': 'NS',
     'set': 'BEÁLLÍT',
-    'portInUse':
-        'A [@port] port használatban van, kérjük, változtassa meg a portot',
+    'portInUse': 'A [@port] port használatban van, kérjük, változtassa meg a portot',
     'effectAfterRestart': 'Kihatás indítás után',
     'developer': 'Fejlesztő',
     'logDirectory': 'Napló könyvtár',
@@ -99,13 +94,11 @@ const huHU = {
     'username': 'Felhasználónév',
     'password': 'Jelszó',
     'thanks': 'Köszönet',
-    'thanksDesc':
-        'Köszönet minden hozzájárulónak, aki segített a Gopeed közösség építésében és fejlesztésében!',
+    'thanksDesc': 'Köszönet minden hozzájárulónak, aki segített a Gopeed közösség építésében és fejlesztésében!',
     'browserExtension': 'Böngésző bővítmény',
     'launchAtStartup': 'Indítás indításkor',
     'runAsMenubarApp': 'Futtatás menüsáv alkalmazásként',
-    'runAsMenubarAppDesc':
-        'Dock ikon elrejtése és csak a menüsávban való futtatás',
+    'runAsMenubarAppDesc': 'Dock ikon elrejtése és csak a menüsávban való futtatás',
     'taskDetail': 'Feladat részlete',
     'taskName': 'Feladat neve',
     'taskUrl': 'Feladat URL',

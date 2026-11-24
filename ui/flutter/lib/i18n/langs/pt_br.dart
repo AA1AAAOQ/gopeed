@@ -22,8 +22,7 @@ const ptBR = {
     'followSettings': 'Follow Settings',
     'downloadLink': 'Link de Download',
     'downloadLinkValid': 'Por favor, insira o link de download',
-    'downloadLinkHit':
-        'Por favor, insira o link de download, um por linha@append',
+    'downloadLinkHit': 'Por favor, insira o link de download, um por linha@append',
     'download': 'Download',
     'noFileSelected': 'Por favor, selecione ao menos um arquivo para continuar',
     'noStoragePermission': 'Permissão de Armazenamento Necessária',
@@ -38,11 +37,9 @@ const ptBR = {
     'useServerCtime': 'Use server time for file creation',
     'maxRunning': 'Máximo de Tarefas Simultâneas',
     'defaultDirectDownload': 'Marcar download direto por padrão',
-    'autoDeleteMissingFileTasks':
-        'Excluir automaticamente tarefas com arquivos ausentes',
+    'autoDeleteMissingFileTasks': 'Excluir automaticamente tarefas com arquivos ausentes',
     'items': '@count itens',
-    'subscribeFail':
-        'Falha na Assinatura, verifique sua conexão ou tente novamente mais tarde',
+    'subscribeFail': 'Falha na Assinatura, verifique sua conexão ou tente novamente mais tarde',
     'update': 'Atualizar',
     'updateDaily': 'Atualizar Diariamente',
     'lastUpdate': 'Última Atualização: @time',
@@ -97,13 +94,11 @@ const ptBR = {
     'username': 'Usuário',
     'password': 'Senha',
     'thanks': 'Obrigado',
-    'thanksDesc':
-        'Obrigado a todos os colaboradores que ajudaram a construir e desenvolver a comunidade Gopeed!',
+    'thanksDesc': 'Obrigado a todos os colaboradores que ajudaram a construir e desenvolver a comunidade Gopeed!',
     'browserExtension': 'Extensões para Navegadores',
     'launchAtStartup': 'Launch at Startup',
     'runAsMenubarApp': 'Executar como aplicativo da barra de menus',
-    'runAsMenubarAppDesc':
-        'Ocultar ícone do Dock e executar apenas na barra de menus',
+    'runAsMenubarAppDesc': 'Ocultar ícone do Dock e executar apenas na barra de menus',
     'taskDetail': 'Detalhes da Tarefa',
     'taskName': 'Nome da Tarefa',
     'taskUrl': 'Tarefa URL',

@@ -207,5 +207,5 @@ const zhCN = {
     'desktopNotification': '桌面通知',
     'notificationTaskDone': '任务完成',
     'notificationTaskError': '任务失败',
-  }
+  },
 };

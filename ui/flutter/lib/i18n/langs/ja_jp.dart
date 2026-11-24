@@ -1,5 +1,5 @@
 const jaJP = {
-  "ja_JP": {
+  'ja_JP': {
     'label': '日本語',
     'error': 'エラー',
     'tip': 'ヒント',
@@ -92,5 +92,5 @@ const jaJP = {
     'desktopNotification': 'デスクトップ通知',
     'notificationTaskDone': 'タスク完了',
     'notificationTaskError': 'タスクエラー',
-  }
+  },
 };

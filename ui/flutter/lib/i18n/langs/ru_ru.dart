@@ -22,8 +22,7 @@ const ruRU = {
     'followSettings': 'По умолчанию',
     'downloadLink': 'Ссылка на скачивание',
     'downloadLinkValid': 'Пожалуйста, введите ссылку для скачивания',
-    'downloadLinkHit':
-        'Пожалуйста, введите ссылку для скачивания, HTTP/HTTPS/MAGNET поддерживаются@append',
+    'downloadLinkHit': 'Пожалуйста, введите ссылку для скачивания, HTTP/HTTPS/MAGNET поддерживаются@append',
     'download': 'Скачать',
     'noFileSelected': 'Файл не выбран',
     'noStoragePermission': 'Требуется доступ к хранилищу',
@@ -41,8 +40,7 @@ const ruRU = {
     'autoStartTasks': 'Автоматически запускать незавершённые задачи при старте',
     'autoDeleteMissingFileTasks': 'Автоудаление задач с отсутствующими файлами',
     'items': '@подсчет элементов',
-    'subscribeFail':
-        'Подписка не удалась, пожалуйста, проверьте сеть или повторите попытку позже',
+    'subscribeFail': 'Подписка не удалась, пожалуйста, проверьте сеть или повторите попытку позже',
     'update': 'Обновить',
     'updateDaily': 'Обновлять ежедневно',
     'lastUpdate': 'Последнее обновление: @время',
@@ -97,13 +95,11 @@ const ruRU = {
     'username': 'Имя пользователя',
     'password': 'Пароль',
     'thanks': 'Благодарности',
-    'thanksDesc':
-        'Благодарим всех участников за их вклад в строительство и развитие сообщества Gopeed!',
+    'thanksDesc': 'Благодарим всех участников за их вклад в строительство и развитие сообщества Gopeed!',
     'browserExtension': 'Расширение браузера',
     'launchAtStartup': 'Запускать при загрузке системы',
     'runAsMenubarApp': 'Запускать как приложение в строке меню',
-    'runAsMenubarAppDesc':
-        'Скрыть значок в Dock и запускать только в строке меню',
+    'runAsMenubarAppDesc': 'Скрыть значок в Dock и запускать только в строке меню',
     'taskDetail': 'Детали задания',
     'taskName': 'Название задачи',
     'taskUrl': 'URL задачи',
@@ -143,5 +139,5 @@ const ruRU = {
     'desktopNotification': 'Уведомления',
     'notificationTaskDone': 'Задача завершена',
     'notificationTaskError': 'Ошибка задачи',
-  }
+  },
 };

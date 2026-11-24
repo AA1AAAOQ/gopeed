@@ -1,5 +1,5 @@
 const faIR = {
-  "fa_IR": {
+  'fa_IR': {
     'label': 'فارسی',
     'error': 'اررور',
     'tip': 'Tip',
@@ -28,8 +28,7 @@ const faIR = {
     'connections': 'اتصالات',
     'autoDeleteMissingFileTasks': 'حذف خودکار وظایف با فایل‌های گم شده',
     'items': '@count آیتم ها',
-    'subscribeFail':
-        'Subscribe failed, please check network or try again later',
+    'subscribeFail': 'Subscribe failed, please check network or try again later',
     'update': 'بروزرسانی',
     'updateDaily': 'بروزرسانی روزانه',
     'lastUpdate': 'Last update: @time',
@@ -57,8 +56,7 @@ const faIR = {
     'newVersionUpdate': 'بروزرسانی',
     'newVersionLater': 'بعداً',
     'thanks': 'تشکر',
-    'thanksDesc':
-        'از تمامی افرادی که در ساخت و توسعه‌ی جامعه‌ی Gopeed مشارکت کرده‌اند، سپاسگزاری می‌کنیم!',
+    'thanksDesc': 'از تمامی افرادی که در ساخت و توسعه‌ی جامعه‌ی Gopeed مشارکت کرده‌اند، سپاسگزاری می‌کنیم!',
     'browserExtension': 'افزونه مرورگر',
     'skipVerifyCert': 'رد کردن تأیید گواهینامه',
     'archives': 'آرشیوها',
@@ -91,5 +89,5 @@ const faIR = {
     'desktopNotification': 'اعلان‌های دسکتاپ',
     'notificationTaskDone': 'وظیفه تکمیل شد',
     'notificationTaskError': 'خطای وظیفه',
-  }
+  },
 };

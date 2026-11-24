@@ -20,8 +20,7 @@ const plPL = {
     'advancedOptions': 'Zaawansowane',
     'downloadLink': 'Pobierz z linku',
     'downloadLinkValid': 'Otwórz link pobierania',
-    'downloadLinkHit':
-        'Otwórz link pobierania, HTTP/HTTPS/MAGNET wspierane@append',
+    'downloadLinkHit': 'Otwórz link pobierania, HTTP/HTTPS/MAGNET wspierane@append',
     'download': 'Pobierz',
     'noFileSelected': 'Wybierz co najmniej jeden plik aby kontynuować.',
     'noStoragePermission': 'Przyznaj uprawnienia do zapisu',
@@ -35,8 +34,7 @@ const plPL = {
     'connections': 'Połączenia',
     'useServerCtime': 'Użyj czasu serwera do utworzenia pliku',
     'maxRunning': 'Maksymalna liczba zadań',
-    'autoDeleteMissingFileTasks':
-        'Automatycznie usuwaj zadania z brakującymi plikami',
+    'autoDeleteMissingFileTasks': 'Automatycznie usuwaj zadania z brakującymi plikami',
     'items': '@count items',
     'subscribeFail': 'Błąd subskrypcji, sprawdź łączność z internetem',
     'update': 'Aktualizacja',
@@ -89,8 +87,7 @@ const plPL = {
     'username': 'Użytkownik',
     'password': 'Hasło',
     'thanks': 'Dzięki',
-    'thanksDesc':
-        'Dziękuję wszystkim za pomoc przy powstawaniu aplikacji Gopeed!',
+    'thanksDesc': 'Dziękuję wszystkim za pomoc przy powstawaniu aplikacji Gopeed!',
     'browserExtension': 'Wtyczka dla przeglądarki',
     'launchAtStartup': 'Uruchom na starcie',
     'runAsMenubarApp': 'Uruchom jako aplikacja paska menu',

@@ -20,11 +20,9 @@ const esES = {
     'advancedOptions': 'Opciones Avanzadas',
     'downloadLink': 'Enlace de Descarga',
     'downloadLinkValid': 'Por favor, introduce el enlace de descarga',
-    'downloadLinkHit':
-        'Por favor, introduce el enlace de descarga, se admite HTTP/HTTPS/MAGNET@append',
+    'downloadLinkHit': 'Por favor, introduce el enlace de descarga, se admite HTTP/HTTPS/MAGNET@append',
     'download': 'Descargar',
-    'noFileSelected':
-        'Por favor, selecciona al menos un archivo para continuar.',
+    'noFileSelected': 'Por favor, selecciona al menos un archivo para continuar.',
     'noStoragePermission': 'Se requiere permiso de almacenamiento',
     'selectFile': 'Seleccionar Archivo',
     'rename': 'Renombrar',
@@ -37,11 +35,9 @@ const esES = {
     'useServerCtime': 'Usar tiempo del servidor para la creación de archivos',
     'maxRunning': 'Máximo de Tareas en Ejecución',
     'autoStartTasks': 'Iniciar automáticamente tareas incompletas al arrancar',
-    'autoDeleteMissingFileTasks':
-        'Eliminar automáticamente tareas con archivos faltantes',
+    'autoDeleteMissingFileTasks': 'Eliminar automáticamente tareas con archivos faltantes',
     'items': '@count elementos',
-    'subscribeFail':
-        'Suscripción fallida, por favor verifica la red o intenta más tarde',
+    'subscribeFail': 'Suscripción fallida, por favor verifica la red o intenta más tarde',
     'update': 'Actualizar',
     'updateDaily': 'Actualizar diariamente',
     'lastUpdate': 'Última actualización: @time',
@@ -92,13 +88,11 @@ const esES = {
     'username': 'Nombre de usuario',
     'password': 'Contraseña',
     'thanks': 'Agradecimientos',
-    'thanksDesc':
-        '¡Gracias a todos los contribuyentes que han ayudado a construir y desarrollar la comunidad Gopeed!',
+    'thanksDesc': '¡Gracias a todos los contribuyentes que han ayudado a construir y desarrollar la comunidad Gopeed!',
     'browserExtension': 'Extensión del Navegador',
     'launchAtStartup': 'Iniciar al Arranque',
     'runAsMenubarApp': 'Ejecutar como aplicación de barra de menú',
-    'runAsMenubarAppDesc':
-        'Ocultar icono del Dock y ejecutar solo en la barra de menú',
+    'runAsMenubarAppDesc': 'Ocultar icono del Dock y ejecutar solo en la barra de menú',
     'taskDetail': 'Detalles de la Tarea',
     'taskName': 'Nombre de la Tarea',
     'taskUrl': 'URL de la Tarea',

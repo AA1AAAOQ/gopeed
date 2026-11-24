@@ -20,11 +20,9 @@ const frFR = {
     'advancedOptions': 'Options avancées',
     'downloadLink': 'Lien de téléchargement',
     'downloadLinkValid': 'Veuillez entrer le lien de téléchargement',
-    'downloadLinkHit':
-        'Veuillez entrer le lien de téléchargement, HTTP/HTTPS/MAGNET pris en charge',
+    'downloadLinkHit': 'Veuillez entrer le lien de téléchargement, HTTP/HTTPS/MAGNET pris en charge',
     'download': 'Télécharger',
-    'noFileSelected':
-        'Veuillez sélectionner au moins un fichier pour continuer.',
+    'noFileSelected': 'Veuillez sélectionner au moins un fichier pour continuer.',
     'noStoragePermission': 'Permission de stockage requise',
     'selectFile': 'Sélectionner un fichier',
     'rename': 'Renommer',
@@ -34,16 +32,12 @@ const frFR = {
     'downloadDir': 'Répertoire de téléchargement',
     'downloadDirValid': 'Veuillez sélectionner le répertoire de téléchargement',
     'connections': 'Connexions',
-    'useServerCtime':
-        'Utiliser l\'heure du serveur pour la création de fichier',
+    'useServerCtime': 'Utiliser l\'heure du serveur pour la création de fichier',
     'maxRunning': 'Tâches en cours maximum',
-    'autoStartTasks':
-        'Démarrer automatiquement les tâches incomplètes au lancement',
-    'autoDeleteMissingFileTasks':
-        'Supprimer automatiquement les tâches avec fichiers manquants',
+    'autoStartTasks': 'Démarrer automatiquement les tâches incomplètes au lancement',
+    'autoDeleteMissingFileTasks': 'Supprimer automatiquement les tâches avec fichiers manquants',
     'items': '@count éléments',
-    'subscribeFail':
-        'Abonnement échoué, veuillez vérifier le réseau ou réessayer plus tard',
+    'subscribeFail': 'Abonnement échoué, veuillez vérifier le réseau ou réessayer plus tard',
     'update': 'Mettre à jour',
     'updateDaily': 'Mettre à jour quotidiennement',
     'lastUpdate': 'Dernière mise à jour : @time',
@@ -94,13 +88,11 @@ const frFR = {
     'username': 'Nom d\'utilisateur',
     'password': 'Mot de passe',
     'thanks': 'Merci',
-    'thanksDesc':
-        'Merci à tous les contributeurs qui ont aidé à construire et développer la communauté Gopeed !',
+    'thanksDesc': 'Merci à tous les contributeurs qui ont aidé à construire et développer la communauté Gopeed !',
     'browserExtension': 'Extension du navigateur',
     'launchAtStartup': 'Lancer au démarrage',
     'runAsMenubarApp': 'Exécuter en tant qu\'application de barre de menus',
-    'runAsMenubarAppDesc':
-        'Masquer l\'icône du Dock et exécuter uniquement dans la barre de menus',
+    'runAsMenubarAppDesc': 'Masquer l\'icône du Dock et exécuter uniquement dans la barre de menus',
     'skipVerifyCert': 'Ignorer la vérification du certificat',
     'archives': 'Archives',
     'autoExtract': 'Extraire automatiquement les archives',

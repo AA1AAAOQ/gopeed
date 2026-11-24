@@ -1,5 +1,5 @@
 const zhTW = {
-  "zh_TW": {
+  'zh_TW': {
     'label': '中文 (正體)',
     'error': '錯誤',
     'tip': '提示',
@@ -145,5 +145,5 @@ const zhTW = {
     'desktopNotification': '桌面通知',
     'notificationTaskDone': '任務完成',
     'notificationTaskError': '任務失敗',
-  }
+  },
 };

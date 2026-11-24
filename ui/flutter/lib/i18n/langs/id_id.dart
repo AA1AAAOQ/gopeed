@@ -21,8 +21,7 @@ const idID = {
     'followSettings': 'Mengikuti Pengaturan',
     'downloadLink': 'Tautan Unduhan',
     'downloadLinkValid': 'Silakan masukkan tautan unduhan',
-    'downloadLinkHit':
-        'Tolong masukkan tautan unduhan, HTTP/HTTPS/MAGNET didukung@append',
+    'downloadLinkHit': 'Tolong masukkan tautan unduhan, HTTP/HTTPS/MAGNET didukung@append',
     'download': 'Download',
     'noFileSelected': 'Silakan pilih setidaknya satu file untuk melanjutkan.',
     'noStoragePermission': 'Izin penyimpanan diperlukan',
@@ -37,11 +36,9 @@ const idID = {
     'useServerCtime': 'Gunakan waktu server untuk pembuatan file',
     'maxRunning': 'Tugas Maksimum yang Berjalan',
     'defaultDirectDownload': 'Pilih unduhan langsung sebagai opsi standar',
-    'autoDeleteMissingFileTasks':
-        'Otomatis hapus tugas dengan file yang hilang',
+    'autoDeleteMissingFileTasks': 'Otomatis hapus tugas dengan file yang hilang',
     'items': '@count items',
-    'subscribeFail':
-        'Berlangganan gagal, periksa jaringan atau coba lagi nanti',
+    'subscribeFail': 'Berlangganan gagal, periksa jaringan atau coba lagi nanti',
     'update': 'Perbarui',
     'updateDaily': 'Perbarui setiap hari',
     'lastUpdate': 'Pembaruan terakhir: @time',
@@ -94,13 +91,11 @@ const idID = {
     'username': 'Nama Pengguna',
     'password': 'Kata Sandi',
     'thanks': 'Terima Kasih',
-    'thanksDesc':
-        'Terima kasih kepada semua kontributor yang telah membantu membangun dan mengembangkan komunitas Gopeed!',
+    'thanksDesc': 'Terima kasih kepada semua kontributor yang telah membantu membangun dan mengembangkan komunitas Gopeed!',
     'browserExtension': 'Ekstensi Perambanan',
     'launchAtStartup': 'Luncurkan saat Startup',
     'runAsMenubarApp': 'Jalankan sebagai aplikasi bilah menu',
-    'runAsMenubarAppDesc':
-        'Sembunyikan ikon Dock dan jalankan hanya di bilah menu',
+    'runAsMenubarAppDesc': 'Sembunyikan ikon Dock dan jalankan hanya di bilah menu',
     'taskDetail': 'Detail Tugas',
     'taskName': 'Nama Tugas',
     'taskUrl': 'URL Tugas',

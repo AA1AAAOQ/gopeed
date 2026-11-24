@@ -20,8 +20,7 @@ const viVN = {
     'advancedOptions': 'Tùy chọn nâng cao',
     'downloadLink': 'Liên kết tải về',
     'downloadLinkValid': 'Vui lòng nhập liên kết tải về',
-    'downloadLinkHit':
-        'Vui lòng nhập liên kết tải về, hỗ trợ HTTP/HTTPS/MAGNET@append',
+    'downloadLinkHit': 'Vui lòng nhập liên kết tải về, hỗ trợ HTTP/HTTPS/MAGNET@append',
     'download': 'Tải về',
     'noFileSelected': 'Vui lòng chọn ít nhất một tệp để tiếp tục.',
     'noStoragePermission': 'Yêu cầu quyền lưu trữ',
@@ -37,8 +36,7 @@ const viVN = {
     'maxRunning': 'Số nhiệm vụ tối đa',
     'autoDeleteMissingFileTasks': 'Tự động xóa tác vụ có tệp bị thiếu',
     'items': '@count mục',
-    'subscribeFail':
-        'Theo dõi thất bại, vui lòng kiểm tra kết nối mạng hoặc thử lại sau',
+    'subscribeFail': 'Theo dõi thất bại, vui lòng kiểm tra kết nối mạng hoặc thử lại sau',
     'update': 'Cập nhật',
     'updateDaily': 'Cập nhật hàng ngày',
     'lastUpdate': 'Cập nhật lần cuối: @time',
@@ -84,8 +82,7 @@ const viVN = {
     'username': 'Tên đăng nhập',
     'password': 'Mật khẩu',
     'thanks': 'Cảm ơn',
-    'thanksDesc':
-        'Cảm ơn tất cả những người đóng góp đã giúp xây dựng và phát triển cộng đồng Gopeed!',
+    'thanksDesc': 'Cảm ơn tất cả những người đóng góp đã giúp xây dựng và phát triển cộng đồng Gopeed!',
     'browserExtension': 'Tiện ích mở rộng trình duyệt',
     'skipVerifyCert': 'Bỏ qua xác thực chứng chỉ',
     'archives': 'Tập tin nén',
