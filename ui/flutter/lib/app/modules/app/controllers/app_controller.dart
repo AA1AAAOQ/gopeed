@@ -177,6 +177,62 @@ class AppController extends GetxController with WindowListener, TrayListener {
     _windowsResizeSave();
   }
 
+  DateTime? _lastRevealTime;
+
+  /// Restore the main window from tray/minimized state, then bring it to the
+  /// front and grab the focus. This is what "popup the main window when a
+  /// download starts" ends up calling.
+  Future<void> revealMainWindow({String reason = ''}) async {
+    if (!Util.isDesktop()) {
+      return;
+    }
+    try {
+      if (Util.isMacos() && Database.instance.getRunAsMenubarApp()) {
+        // Menubar mode hides the dock icon, show it again so the user can
+        // find the window.
+        await windowManager.setSkipTaskbar(false);
+      }
+      if (await windowManager.isMinimized()) {
+        await windowManager.restore();
+      }
+      await windowManager.show();
+      await windowManager.focus();
+      // Windows foreground lock may keep the window behind the current one.
+      // Toggling always-on-top is the most reliable way to force it up.
+      await Future.delayed(const Duration(milliseconds: 120));
+      final focused = await windowManager.isFocused();
+      if (!focused) {
+        await windowManager.setAlwaysOnTop(true);
+        await windowManager.show();
+        await windowManager.focus();
+        await windowManager.setAlwaysOnTop(false);
+      }
+    } catch (e) {
+      logger.w("reveal main window fail, reason: $reason", e, StackTrace.current);
+    }
+  }
+
+  /// Called when a new download task shows up (created by the create page,
+  /// the browser extension, the REST API, a magnet link, the CLI, ...).
+  void onTaskStarted({String? taskName}) {
+    if (!Util.isDesktop()) {
+      return;
+    }
+    if (!Database.instance.getPopupOnTaskStart()) {
+      return;
+    }
+    final now = DateTime.now();
+    // Debounce: batch creating (e.g. a torrent with many files, or dropping a
+    // bunch of links) must not fight over the window for every single task.
+    if (_lastRevealTime != null &&
+        now.difference(_lastRevealTime!).inMilliseconds < 1500) {
+      return;
+    }
+    _lastRevealTime = now;
+    logger.i("task started, reveal main window: ${taskName ?? ''}");
+    revealMainWindow(reason: taskName ?? 'task started');
+  }
+
   Future<void> _initDeepLinks() async {
     if (Util.isWeb()) {
       // For web, just show window

@@ -82,11 +82,6 @@ class NotificationService extends GetxService {
   void _startPolling() {
     _timer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       try {
-        final config = appController.downloaderConfig.value;
-        if (!config.extra.desktopNotification) {
-          return;
-        }
-
         final tasks = await getTasks([
           Status.ready,
           Status.running,
@@ -96,21 +91,32 @@ class NotificationService extends GetxService {
           Status.done,
         ]);
 
+        // Popup the main window for every new task, no matter who created it
+        // (create page, browser extension, REST API, magnet link, CLI, ...).
+        _detectNewTasks(tasks);
+
+        final notifyEnabled =
+            appController.downloaderConfig.value.extra.desktopNotification;
+
         for (var task in tasks) {
           final prevStatus = _previousStatus[task.id];
           final currentStatus = task.status;
 
           if (prevStatus != null && prevStatus != currentStatus) {
             if (currentStatus == Status.done) {
-              _showNotification(
-                title: 'notificationTaskDone'.tr,
-                body: task.name,
-              );
+              if (notifyEnabled) {
+                _showNotification(
+                  title: 'notificationTaskDone'.tr,
+                  body: task.name,
+                );
+              }
             } else if (currentStatus == Status.error) {
-              _showNotification(
-                title: 'notificationTaskError'.tr,
-                body: task.name,
-              );
+              if (notifyEnabled) {
+                _showNotification(
+                  title: 'notificationTaskError'.tr,
+                  body: task.name,
+                );
+              }
             }
           }
           _previousStatus[task.id] = currentStatus;
@@ -124,6 +130,32 @@ class NotificationService extends GetxService {
         // Ignored
       }
     });
+  }
+
+  final Set<String> _knownTaskIds = {};
+  bool _snapshotInitialized = false;
+
+  /// Compare the task list with the previous snapshot and popup the main
+  /// window if a task showed up in between.
+  void _detectNewTasks(List<Task> tasks) {
+    final currentIds = tasks.map((t) => t.id).toSet();
+    if (!_snapshotInitialized) {
+      // The first snapshot is the state from before the UI could react,
+      // don't popup the window for tasks that already existed at startup.
+      _snapshotInitialized = true;
+      _knownTaskIds.addAll(currentIds);
+      return;
+    }
+    final newIds = currentIds.difference(_knownTaskIds);
+    _knownTaskIds
+      ..clear()
+      ..addAll(currentIds);
+    if (newIds.isEmpty) {
+      return;
+    }
+    final names =
+        tasks.where((t) => newIds.contains(t.id)).map((t) => t.name).toList();
+    appController.onTaskStarted(taskName: names.join(', '));
   }
 
   int _notificationId = 0;

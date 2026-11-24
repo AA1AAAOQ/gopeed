@@ -148,6 +148,9 @@ const enUS = {
     'launchAtStartup': 'Launch at Startup',
     'runAsMenubarApp': 'Run as menubar app',
     'runAsMenubarAppDesc': 'Hide dock icon and run in menubar only',
+    'popupOnTaskStart': 'Popup Main Window When Task Starts',
+    'popupOnTaskStartDesc':
+        'Pop up the main window when a new download task starts, you can close it at any time',
     'seedConfig': 'Seed Config',
     'seedKeep': 'Keep seeding until manually stopped',
     'seedRatio': 'Seed ratio',

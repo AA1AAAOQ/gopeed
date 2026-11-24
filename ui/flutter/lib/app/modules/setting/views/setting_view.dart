@@ -521,6 +521,21 @@ class SettingView extends GetView<SettingController> {
             );
           });
 
+    final popupOnTaskStartEnabled = Database.instance.getPopupOnTaskStart().obs;
+    final buildPopupOnTaskStart = !Util.isDesktop()
+        ? () => null
+        : ListTile(
+            title: Text('popupOnTaskStart'.tr),
+            subtitle: Text('popupOnTaskStartDesc'.tr),
+            trailing: Obx(() => Switch(
+                  value: popupOnTaskStartEnabled.value,
+                  onChanged: (bool value) {
+                    popupOnTaskStartEnabled.value = value;
+                    Database.instance.savePopupOnTaskStart(value);
+                  },
+                )),
+          );
+
     // http config items start
     final httpConfig = downloaderCfg.value.protocolConfig.http;
     final buildHttpUa =
@@ -1747,6 +1762,7 @@ class SettingView extends GetView<SettingController> {
                             buildBrowserExtension(),
                             buildAutoStartup(),
                             buildMenubarMode(),
+                            buildPopupOnTaskStart(),
                             buildDesktopNotification(),
                           ]),
                         )),

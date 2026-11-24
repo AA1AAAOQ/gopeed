@@ -106,6 +106,8 @@ const zhTW = {
     'launchAtStartup': '開機自動執行',
     'runAsMenubarApp': '以選單列應用程式執行',
     'runAsMenubarAppDesc': '隱藏 Dock 圖示，僅在選單列執行',
+    'popupOnTaskStart': '開始下載時彈出主視窗',
+    'popupOnTaskStartDesc': '新建任務開始下載時自動彈出主視窗，視窗可隨時關閉',
     'seedConfig': '做種設定',
     'seedKeep': '持續做種直到手動停止',
     'seedRatio': '做種分享率',

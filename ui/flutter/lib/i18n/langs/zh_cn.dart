@@ -145,6 +145,8 @@ const zhCN = {
     'launchAtStartup': '开机自动运行',
     'runAsMenubarApp': '以菜单栏应用运行',
     'runAsMenubarAppDesc': '隐藏程序坞图标，仅在菜单栏运行',
+    'popupOnTaskStart': '开始下载时弹出主窗口',
+    'popupOnTaskStartDesc': '新建任务开始下载时自动弹出主窗口，窗口可随时关闭',
     'seedConfig': '做种设置',
     'seedKeep': '持续做种直到手动停止',
     'seedRatio': '做种分享率',
