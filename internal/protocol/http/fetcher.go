@@ -1191,8 +1191,7 @@ func (f *Fetcher) runConnectionWithResolveResp(conn *connection) {
 		if n > 0 {
 			f.fileMu.Lock()
 			if f.file != nil {
-				writeOffset := conn.Chunk.Downloaded
-				_, writeErr := f.file.WriteAt(buf[:n], writeOffset)
+				_, writeErr := f.file.WriteAt(buf[:n], conn.Chunk.Downloaded)
 				if writeErr != nil {
 					f.fileMu.Unlock()
 					f.connMu.Lock()
@@ -1206,7 +1205,7 @@ func (f *Fetcher) runConnectionWithResolveResp(conn *connection) {
 				}
 			}
 			f.fileMu.Unlock()
-			f.addPartProgress(writeOffset, int64(n))
+			f.addPartProgress(conn.Chunk.Downloaded, int64(n))
 
 			conn.Chunk.Downloaded += int64(n)
 			conn.Downloaded += int64(n)
@@ -1295,15 +1294,14 @@ func (f *Fetcher) runConnectionFallback(conn *connection) {
 				if n > 0 {
 					f.fileMu.Lock()
 					if f.file != nil {
-						writeOffset := conn.Chunk.Downloaded
-				_, writeErr := f.file.WriteAt(buf[:n], writeOffset)
+						_, writeErr := f.file.WriteAt(buf[:n], conn.Chunk.Downloaded)
 						if writeErr != nil {
 							f.fileMu.Unlock()
 							return writeErr
 						}
 					}
 					f.fileMu.Unlock()
-					f.addPartProgress(writeOffset, int64(n))
+					f.addPartProgress(conn.Chunk.Downloaded, int64(n))
 
 					conn.Chunk.Downloaded += int64(n)
 					conn.Downloaded += int64(n)
